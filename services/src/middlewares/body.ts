@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   cattleCreateValidation,
   cattleUpdateValidation,
-} from "../validations/cattle.validation";
+} from "../validations/worker.validation";
 
 function parseJSONOrString(str: string) {
   let result;

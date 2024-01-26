@@ -135,7 +135,7 @@ async function seedDatabase() {
     for (let i = 0; i < 10000; i++) {
       console.log('Started Cattle No: ', countdown);
       const data = generateRandomCattleData();
-      const resp = await prisma.cattle.create({
+      const resp = await prisma.worker.create({
         data: data,
       });
       createdCattle.push(resp);

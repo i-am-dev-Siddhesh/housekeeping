@@ -88,7 +88,7 @@ function generateRandomCattleTitle() {
     'Simmental',
     'Charolais',
     'Limousin',
-    // Add more cattle breeds here
+    // Add more worker breeds here
   ];
 
   const randomIndex = Math.floor(Math.random() * titles.length);
@@ -97,7 +97,7 @@ function generateRandomCattleTitle() {
 
 function generateRandomCattleDescription() {
   const descriptions = [
-    'Healthy and well-fed cattle.',
+    'Healthy and well-fed worker.',
     'Ideal for dairy farming.',
     'Great for breeding purposes.',
     'High milk production capacity.',

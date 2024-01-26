@@ -57,7 +57,7 @@ async function main() {
     const users = (await prisma.user.findMany()).map((user) => user.id);
     const cattleData = generateCattleData(categories, users, 100);
     if (cattleData) {
-      const createdCattles = await prisma.cattle.createMany({
+      const createdCattles = await prisma.worker.createMany({
         data: cattleData,
       });
 

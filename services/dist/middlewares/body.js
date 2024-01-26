@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertStringPropertiesToIntegerMiddleware = void 0;
-const cattle_validation_1 = require("../validations/cattle.validation");
+const worker_validation_1 = require("../validations/worker.validation");
 function parseJSONOrString(str) {
     let result;
     try {
@@ -15,8 +15,8 @@ function parseJSONOrString(str) {
 }
 function convertStringPropertiesToIntegerMiddleware(req, res, next) {
     const schema = req.route.path.startsWith("/add")
-        ? cattle_validation_1.cattleUpdateValidation
-        : cattle_validation_1.cattleCreateValidation;
+        ? worker_validation_1.cattleUpdateValidation
+        : worker_validation_1.cattleCreateValidation;
     let data = req.body;
     for (let key in data) {
         data[key] = parseJSONOrString(data[key]);
