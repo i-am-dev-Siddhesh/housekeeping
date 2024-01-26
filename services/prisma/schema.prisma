@@ -1,0 +1,100 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  RESERVED
+}
+model Admin {
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  phoneNumber       String    @unique
+  profileUrl  String?
+  location    Json?
+  orders      Order[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Worker {
+  id                        Int       @id @default(autoincrement())
+  name                      String
+  email                     String    @unique
+  phoneNumber               String    @unique
+  kycVerified               Boolean   @default(false)
+  availableFrom             DateTime
+  location                  Json?
+  minimumRequiredMonthlyIncome Float
+  leavesTaken               Int       @default(0)
+  profileUrl                String?
+  orders                    Order[]
+  slots                     Slot[]
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+}
+
+model Order {
+  id               Int       @id @default(autoincrement())
+  customer         Customer  @relation(fields: [customerId], references: [id])
+  customerId       Int
+  worker           Worker?   @relation(fields: [workerId], references: [id])
+  workerId         Int?
+  budget           Float
+  location         Json?
+  time             DateTime
+  status           OrderStatus
+  slot             Slot?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Slot {
+  id               Int       @id @default(autoincrement())
+  worker           Worker    @relation(fields: [workerId], references: [id])
+  workerId         Int
+  startTime        DateTime
+  endTime          DateTime
+  status           SlotStatus
+  order            Order?    @relation(fields: [orderId], references: [id])
+  orderId          Int? @unique 
+}
+
+model OTP {
+  id            Int       @id @default(autoincrement())
+  phoneNumber   String    @unique
+  otp           String
+  expirationTime DateTime
+}
+
+model Common {
+  id            Int                    @id @default(autoincrement())
+  play_store_app_version String
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime?              @updatedAt
+}
