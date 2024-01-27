@@ -20,7 +20,6 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
       minimumRequiredMonthlyIncome,
       leavesTaken,
     } = req.body;
-    console.log('req.body', req.body);
 
     let profileUrl = '';
     if (req.files) {

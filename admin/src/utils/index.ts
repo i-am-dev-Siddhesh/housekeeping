@@ -20,6 +20,15 @@ export function parseLocationData(dataString: string | JSON) {
     const parsedData =
       typeof dataString === 'object' ? dataString : JSON.parse(dataString);
 
+    if (parsedData && parsedData.lat) {
+      const lat = parseFloat(parsedData.lat);
+      const lon = parseFloat(parsedData.lon);
+      const label = parsedData.label;
+      if (!isNaN(lat) && !isNaN(lon)) {
+        return { lat, lon, label };
+      }
+    }
+
     if (
       parsedData &&
       parsedData.raw &&
@@ -28,15 +37,19 @@ export function parseLocationData(dataString: string | JSON) {
     ) {
       const lat = parseFloat(parsedData.raw.lat);
       const lon = parseFloat(parsedData.raw.lon);
+      const label = parsedData.raw.label;
 
       if (!isNaN(lat) && !isNaN(lon)) {
-        return { lat, lon };
+        return { lat, lon, label };
       }
     }
   } catch (error) {
     console.error('Error parsing location data:', error);
   }
-
   // Return null or handle the case when parsing is not successful
-  return { lat: +DEFAULT_LOCATION.raw.lat, lon: +DEFAULT_LOCATION.raw.lon };
+  return {
+    lat: +DEFAULT_LOCATION.raw.lat,
+    lon: +DEFAULT_LOCATION.raw.lon,
+    label: DEFAULT_LOCATION.label,
+  };
 }

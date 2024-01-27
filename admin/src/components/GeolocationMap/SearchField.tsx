@@ -12,13 +12,13 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import _ from 'lodash';
 import { useCallback, useEffect, useState } from 'react';
 
-const SearchField = ({ setValue }: any) => {
+const SearchField = ({ setValue, value }: any) => {
     const [searchedLocations, setSearchedLocations] = useState<ILocationData[]>(
         []
     );
     const [selectedLocation, setSelectedLocation] =
-        useState<ILocationData | null>(DEFAULT_LOCATION);
-    const [searchQuery, setSearchQuery] = useState<any>(DEFAULT_LOCATION.label);
+        useState<ILocationData | null>();
+    const [searchQuery, setSearchQuery] = useState<any>(value.label);
 
     const handleItemClick = (location: ILocationData) => {
         setSelectedLocation(location);
@@ -33,9 +33,10 @@ const SearchField = ({ setValue }: any) => {
         setSearchedLocations(results);
     }, []);
 
+    
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            if (searchQuery && searchQuery !== selectedLocation?.label) {
+            if (searchQuery && searchQuery !== value.label && searchQuery !== selectedLocation?.label) {
                 searchLocations(searchQuery);
             }
         }, 300);

@@ -1,15 +1,14 @@
 import WorkerService from '@/services/Worker';
-import { addWorker } from '@/store/reducers/worker.reducer';
+import { addWorker, updateWorker } from '@/store/reducers/worker.reducer';
 import { parseLocationData } from '@/utils';
-import { DEFAULT_LOCATION } from '@/utils/constant';
 import { errorFormatter, useYupValidationResolver } from '@/utils/helpers';
-import { workerUpdateValidationSchema, workerValidationSchema } from '@/validation/woker.validation';
+import { workerUpdateValidationSchema } from '@/validation/woker.validation';
 import { Button, Flex, useToast } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import CustomInput from '../FormControls';
-import { useEffect } from 'react';
 const GeolocationMap = dynamic(() => import('../../GeolocationMap'), {
   ssr: false,
   loading: () => <p>Loading map...</p>,
@@ -43,8 +42,9 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
     try {
 
       const location = {
-        lat: data?.location?.x,
-        long: data?.location?.y,
+        lat: data?.location?.y,
+        lon: data?.location?.x,
+        label: data?.location?.label,
       };
 
       delete data.location;
@@ -56,16 +56,17 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
           for (let i = 0; i < value.length; i++) {
             formData.append(key, value[i]);
           }
-        } else  if(value){
+        } else if (value) {
           // For regular form fields
           // @ts-ignore
           formData.append(key, value);
         }
       });
-      formData.append('location[latitude]', location.lat);
-      formData.append('location[longitude]', location.long);
+      formData.append('location[lat]', location.lat);
+      formData.append('location[lon]', location.lon);
+      formData.append('location[label]', location.label);
       const resp = worker ? await WorkerService.updateWorker(worker.id, formData) : await WorkerService.createWorker(formData);
-      dispatch(worker ? addWorker({ data: resp.data }) : addWorker({ data: resp.data }));
+      dispatch(worker ? updateWorker({ data: resp.data }) : addWorker({ data: resp.data }));
       toast({
         title: 'Success',
         description: `Worker ${worker ? "updated" : "added"} successfully!!!`,
@@ -89,16 +90,16 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
   useEffect(() => {
     if (worker) {
       reset({
-        location: DEFAULT_LOCATION,
+        location: worker.location,
         name: worker.name,
         phoneNumber: worker.phoneNumber,
-        availableFrom: worker.availableFrom,
+        availableFrom: worker.availableFrom &&
+          new Date(worker.availableFrom)?.toISOString()?.split('T')[0],
         kycVerified: worker.kycVerified,
         minimumRequiredMonthlyIncome: worker.minimumRequiredMonthlyIncome,
         leavesTaken: worker.leavesTaken,
       })
     }
-
   }, [worker])
 
   return (
@@ -178,11 +179,13 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
           value={watch('aadhaar')}
           placeholder="Upload your Aadhaar image"
         />
-        <SearchField register={register} errors={errors} setValue={setValue} />
+        <SearchField register={register} errors={errors} value={parseLocationData(watch('location'))} setValue={setValue} />
+
         <GeolocationMap
           lat={parseLocationData(watch('location'))?.lat}
           long={parseLocationData(watch('location'))?.lon}
         />
+
         <Button colorScheme="green" type="submit" isLoading={isSubmitting}>
           Submit
         </Button>

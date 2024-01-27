@@ -19,15 +19,19 @@ export const createWorkerSchema = Joi.object().keys({
     'any.required': 'Available from is a required field',
   }),
   location: Joi.object().keys({
-    latitude: Joi.number().messages({
+    lat: Joi.number().messages({
       'string.base': `Latitude should be a type of string`,
       'string.empty': `Latitude cannot be an empty field`,
       'any.required': `Latitude is a required field`,
     }),
-    longitude: Joi.number().messages({
+    lon: Joi.number().messages({
       'string.base': `Longitude should be a type of string`,
       'string.empty': `Longitude cannot be an empty field`,
       'any.required': `Longitude is a required field`,
+    }),
+    label: Joi.string().required().messages({
+      'string.base': 'Label should be a type of string',
+      'string.empty': 'Label cannot be an empty field',
     }),
   }),
   minimumRequiredMonthlyIncome: Joi.number().required().messages({
@@ -57,11 +61,15 @@ export const updateWorkerSchema = Joi.object().keys({
     'date.base': 'Available from should be a valid date',
   }),
   location: Joi.object().keys({
-    latitude: Joi.number().messages({
+    lat: Joi.number().messages({
       'number.base': 'Latitude should be a type of number',
     }),
-    longitude: Joi.number().messages({
+    lon: Joi.number().messages({
       'number.base': 'Longitude should be a type of number',
+    }),
+    label: Joi.string().messages({
+      'string.base': 'Label should be a type of string',
+      'string.empty': 'Label cannot be an empty field',
     }),
   }),
   minimumRequiredMonthlyIncome: Joi.number().messages({

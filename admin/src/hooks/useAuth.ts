@@ -18,9 +18,7 @@ export const useAuth = () => {
     } else {
       AuthService.getLoggedInUser()
         .then((resp) => {
-          setAdminData(resp.data);
-          console.log('resp',resp.data);
-          
+          setAdminData(resp.data);          
           dispatch(setAdmin({ data: resp.data }));
         })
         .catch(() => {

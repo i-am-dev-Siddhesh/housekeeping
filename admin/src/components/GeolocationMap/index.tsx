@@ -1,17 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
-import { DEFAULT_LOCATION } from '@/utils/constant';
+import 'leaflet/dist/leaflet.css';
+import { useEffect } from 'react';
+import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 
 interface IProps {
-  lat?: number;
-  long?: number
+  lat: number;
+  long: number
 }
-const GeolocationMap = ({ lat = +DEFAULT_LOCATION.raw.lat, long = +DEFAULT_LOCATION.raw.lon }: IProps) => {
-
-
+const GeolocationMap = ({ lat , long  }: IProps) => {  
   return (
     <MapContainer
       center={[lat, long]}

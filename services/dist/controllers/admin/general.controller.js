@@ -30,7 +30,6 @@ const errorResponse_1 = require("../../utils/errorResponse");
 const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, phoneNumber, kycVerified, availableFrom, location, minimumRequiredMonthlyIncome, leavesTaken, } = req.body;
-        console.log('req.body', req.body);
         let profileUrl = '';
         if (req.files) {
             //@ts-ignore
