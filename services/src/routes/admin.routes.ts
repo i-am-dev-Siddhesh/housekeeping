@@ -13,6 +13,7 @@ import { checkAdminToken, checkApiKey } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
 import { createWorkerSchema } from '../validations/admin.validation';
 import { adminLoginSchema } from '../validations/auth';
+import { convertStringPropertiesToIntegerMiddleware } from '../middlewares/body';
 
 const router = express.Router({ mergeParams: true });
 const upload = multer({ dest: 'uploads/' });
@@ -30,6 +31,7 @@ router
     checkApiKey,
     checkAdminToken,
     upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]),
+    convertStringPropertiesToIntegerMiddleware,
     validate(createWorkerSchema),
     createWorkerAdmin
   );

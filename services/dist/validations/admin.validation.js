@@ -11,9 +11,9 @@ exports.createWorkerSchema = joi_1.default.object().keys({
         'string.empty': 'Name cannot be an empty field',
         'any.required': 'Name is a required field',
     }),
-    phoneNumber: joi_1.default.string().required().messages({
-        'string.base': 'Phone number should be a type of string',
-        'string.empty': 'Phone number cannot be an empty field',
+    phoneNumber: joi_1.default.number().required().messages({
+        'number.base': 'Phone number should be a type of number',
+        'number.empty': 'Phone number cannot be an empty field',
         'any.required': 'Phone number is a required field',
     }),
     kycVerified: joi_1.default.boolean().default(false).messages({

@@ -18,7 +18,8 @@ const errorResponse_1 = require("../../utils/errorResponse");
 // @access  Protected
 const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, email, phoneNumber, kycVerified, availableFrom, location, minimumRequiredMonthlyIncome, leavesTaken, } = req.body;
+        const { name, phoneNumber, kycVerified, availableFrom, location, minimumRequiredMonthlyIncome, leavesTaken, } = req.body;
+        console.log('req.body', req.body);
         let profileUrl = '';
         if (req.files) {
             //@ts-ignore
@@ -37,10 +38,9 @@ const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const newWorker = yield prisma_1.prisma.worker.create({
             data: {
                 name,
-                email,
-                phoneNumber,
+                phoneNumber: String(phoneNumber),
                 kycVerified,
-                availableFrom,
+                availableFrom: new Date(availableFrom),
                 location,
                 minimumRequiredMonthlyIncome,
                 leavesTaken,

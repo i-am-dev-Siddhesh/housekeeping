@@ -30,6 +30,15 @@ export const worker = createSlice({
       state.count = action.payload.count;
     },
 
+    addWorker: (
+      state,
+      action: PayloadAction<{ data: any }>
+    ) => {
+      state.isLoading = false;
+      state.workers = [...state.workers, action.payload.data];
+      state.count = state.count+1
+    },
+
     setWorkerIsLoading: (
       state,
       action: PayloadAction<{ isLoading: boolean }>
@@ -48,6 +57,7 @@ export const worker = createSlice({
   },
 });
 
-export const { setWorkers, setWorkerIsLoading, setTakeAndSkip } = worker.actions;
+export const { setWorkers, setWorkerIsLoading, setTakeAndSkip,addWorker } =
+  worker.actions;
 
 export default worker.reducer;

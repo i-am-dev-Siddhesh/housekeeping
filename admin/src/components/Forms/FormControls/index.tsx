@@ -20,6 +20,7 @@ interface IProps {
   rightIcon?: any;
   onChange?: any;
   value?: any;
+  placeholder?: string
 }
 
 const CustomInput = ({
@@ -31,6 +32,7 @@ const CustomInput = ({
   name,
   rightIcon,
   value,
+  placeholder
 }: IProps) => {
   return (
     <>
@@ -47,6 +49,7 @@ const CustomInput = ({
               {...register(name)}
               type={type}
               accept="image/*"
+              placeholder={placeholder}
             />
             {rightIcon}
           </InputGroup>

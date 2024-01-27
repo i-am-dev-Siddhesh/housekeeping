@@ -11,6 +11,7 @@ const auth_1 = require("../middlewares/auth");
 const validate_1 = require("../middlewares/validate");
 const admin_validation_1 = require("../validations/admin.validation");
 const auth_2 = require("../validations/auth");
+const body_1 = require("../middlewares/body");
 const router = express_1.default.Router({ mergeParams: true });
 const upload = (0, multer_1.default)({ dest: 'uploads/' });
 router
@@ -20,7 +21,7 @@ router.route('/auth/me').get(auth_1.checkApiKey, auth_1.checkAdminToken, auth_co
 // Worker Routes
 router
     .route('/worker/create')
-    .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]), (0, validate_1.validate)(admin_validation_1.createWorkerSchema), general_controller_1.createWorkerAdmin);
+    .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]), body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.createWorkerSchema), general_controller_1.createWorkerAdmin);
 router
     .route('/worker/all')
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findWorkersForAdmin);

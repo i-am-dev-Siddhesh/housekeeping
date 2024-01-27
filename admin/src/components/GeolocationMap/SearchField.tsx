@@ -22,7 +22,7 @@ const SearchField = ({ setValue }: any) => {
 
     const handleItemClick = (location: ILocationData) => {
         setSelectedLocation(location);
-        setValue('location', JSON.stringify(location));
+        setValue('location', location);
         setSearchQuery(location.label);
         setSearchedLocations([]);
     };

@@ -13,7 +13,6 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
   try {
     const {
       name,
-      email,
       phoneNumber,
       kycVerified,
       availableFrom,
@@ -21,6 +20,7 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
       minimumRequiredMonthlyIncome,
       leavesTaken,
     } = req.body;
+console.log('req.body',req.body);
 
     let profileUrl = '';
     if (req.files) {
@@ -43,10 +43,9 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
     const newWorker = await prisma.worker.create({
       data: {
         name,
-        email,
-        phoneNumber,
+        phoneNumber: String(phoneNumber),
         kycVerified,
-        availableFrom,
+        availableFrom: new Date(availableFrom),
         location,
         minimumRequiredMonthlyIncome,
         leavesTaken,

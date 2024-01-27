@@ -15,9 +15,10 @@ export const formatTimestamp = (timestamp: Date) => {
   return formattedDate;
 };
 
-export function parseLocationData(dataString: string) {
+export function parseLocationData(dataString: string | JSON) {
   try {
-    const parsedData = JSON.parse(dataString);
+    const parsedData =
+      typeof dataString === 'object' ? dataString : JSON.parse(dataString);
 
     if (
       parsedData &&
