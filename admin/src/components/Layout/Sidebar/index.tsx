@@ -18,6 +18,7 @@ import { ReactNode, ReactText } from 'react';
 import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
 import CattlemartLogo from '../../../../public/cattlemart-logo.png';
+import CreateWorkerModal from '@/components/Forms/CreateWorkerForm';
 
 export default function SimpleSidebar({
   children,
@@ -81,6 +82,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Users
           </Button>
         </NextLink>
+        <CreateWorkerModal />
       </Flex>
 
 

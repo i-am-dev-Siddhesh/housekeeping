@@ -20,7 +20,7 @@ router.route('/auth/me').get(auth_1.checkApiKey, auth_1.checkAdminToken, auth_co
 // Worker Routes
 router
     .route('/worker/create')
-    .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.single('image'), (0, validate_1.validate)(admin_validation_1.createWorkerSchema), general_controller_1.createWorkerAdmin);
+    .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]), (0, validate_1.validate)(admin_validation_1.createWorkerSchema), general_controller_1.createWorkerAdmin);
 router
     .route('/worker/all')
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findWorkersForAdmin);

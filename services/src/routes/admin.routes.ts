@@ -29,7 +29,7 @@ router
   .post(
     checkApiKey,
     checkAdminToken,
-    upload.single('image'),
+    upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]),
     validate(createWorkerSchema),
     createWorkerAdmin
   );

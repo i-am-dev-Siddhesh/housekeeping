@@ -5,6 +5,8 @@ import '@/styles/globals.css';
 import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
+import 'leaflet/dist/leaflet.css';
+import 'node_modules/leaflet-geosearch/dist/geosearch.css';
 
 function App({ Component, pageProps }: AppProps) {
   const { isLoading } = useAuth()

@@ -20,8 +20,17 @@ const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const { name, email, phoneNumber, kycVerified, availableFrom, location, minimumRequiredMonthlyIncome, leavesTaken, } = req.body;
         let profileUrl = '';
-        if (req.file) {
-            console.log('req.file,req.file', req.file);
+        if (req.files) {
+            //@ts-ignore
+            const profileFiles = req.files.profile || [];
+            if (profileFiles.length > 0) {
+                console.log('profileFiles', profileFiles);
+            }
+            //@ts-ignore
+            const aadhaarFiles = req.files.aadhaar || [];
+            if (aadhaarFiles.length > 0) {
+                console.log('aadhaarFiles', aadhaarFiles);
+            }
             // const result = await uploadToS3(req.file);
             // profileUrl = result.Location;
         }

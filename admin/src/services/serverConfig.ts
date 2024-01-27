@@ -110,6 +110,20 @@ const put = (
     .catch((error: AxiosError) => requestFailureCallback(url, error));
 };
 
+const formDataPost = (
+  url: string,
+  params?: Record<string, any>,
+  data?: Record<string, any>
+): Promise<any> => {
+  return formDataInstance
+    .post(url, data, {
+      params,
+    })
+    .then((response: AxiosResponse) => response.data)
+    .catch((error: AxiosError) => requestFailureCallback(url, error));
+};
+
+
 const formDataPut = (
     url: string,
     params?: Record<string, any>,
@@ -137,4 +151,4 @@ const delet = (
     .catch((error: AxiosError) => requestFailureCallback(url, error));
 };
 
-export { get, post, put, postWithServerResponse, patch, delet, formDataPut };
+export { get, post, put, postWithServerResponse, patch, delet, formDataPut,formDataPost };

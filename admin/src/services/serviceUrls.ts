@@ -4,6 +4,7 @@ const Services = {
   Logout: "admin/auth/logout",
   
   worker: "/admin/worker",
+  createWorker: "/admin/worker/create",
   workers: "/admin/worker/all",
 } as const;
 

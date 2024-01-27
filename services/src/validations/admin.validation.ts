@@ -6,12 +6,6 @@ export const createWorkerSchema = Joi.object().keys({
     'string.empty': 'Name cannot be an empty field',
     'any.required': 'Name is a required field',
   }),
-  email: Joi.string().email().required().messages({
-    'string.base': 'Email should be a type of string',
-    'string.empty': 'Email cannot be an empty field',
-    'string.email': 'Email should be a valid email address',
-    'any.required': 'Email is a required field',
-  }),
   phoneNumber: Joi.string().required().messages({
     'string.base': 'Phone number should be a type of string',
     'string.empty': 'Phone number cannot be an empty field',
@@ -36,7 +30,7 @@ export const createWorkerSchema = Joi.object().keys({
       'any.required': `Longitude is a required field`,
     }),
   }),
-  minimumRequiredMonthlyIncome: Joi.number().messages({
+  minimumRequiredMonthlyIncome: Joi.number().required().messages({
     'number.base': 'Minimum required monthly income should be a type of number',
   }),
   leavesTaken: Joi.number().default(0).messages({

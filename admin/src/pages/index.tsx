@@ -1,5 +1,6 @@
-import WorkerShower from '@/components/WorkerShower';
+"use client"
 import BasicLayout from '@/components/Layout';
+import WorkerShower from '@/components/WorkerShower';
 
 export default function Home() {
 
