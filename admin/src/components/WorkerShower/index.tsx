@@ -9,14 +9,17 @@ import {
   selectWorkersCount,
   selectWorkersLoading,
 } from '@/store/selectors/worker';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from '../CustomTable';
+import CreateUpdateWorkerModal from '../Forms/CreateUpdateWorkerModal';
 
 const WorkerShower = () => {
   const dispatch = useDispatch();
   const workers = useSelector(selectWorkers);
   const isLoading = useSelector(selectWorkersLoading);
   const count = useSelector(selectWorkersCount);
+  const [worker, setWorker] = useState()
 
   const fetchData = async (pageIndex: number, pageSize: number) => {
     try {
@@ -36,13 +39,17 @@ const WorkerShower = () => {
   };
 
   return (
-    <CustomTable
-      fetchData={fetchData}
-      count={count}
-      data={workers}
-      isLoading={isLoading}
-      columns={WorkerColumns}
-    />
+    <>
+      <CustomTable
+        fetchData={fetchData}
+        count={count}
+        data={workers}
+        isLoading={isLoading}
+        columns={WorkerColumns}
+        customRowProps={{ handleUpdateWorker: setWorker }}
+      />
+      <CreateUpdateWorkerModal worker={worker} isOpen={worker ? true : false} handleCloseModal={() => setWorker(undefined)} />
+    </>
   );
 };
 

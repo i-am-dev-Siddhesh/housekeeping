@@ -18,10 +18,15 @@ function createWorker(data: any): Promise<any> {
   return formDataPost(Services.createWorker, {}, data);
 }
 
+function updateWorker(workerId: number, data: any): Promise<any> {
+  return formDataPut(Services.updateWorker + '/' + workerId, {}, data);
+}
+
 const WorkerService = {
   getWorkers,
   getSingleWorker,
-  createWorker
+  createWorker,
+  updateWorker,
 };
 
 export default WorkerService;

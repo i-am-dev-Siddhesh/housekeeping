@@ -8,10 +8,14 @@ import {
   createWorkerAdmin,
   findWorkerForAdmin,
   findWorkersForAdmin,
+  updateWorkerAdmin,
 } from '../controllers/admin/general.controller';
 import { checkAdminToken, checkApiKey } from '../middlewares/auth';
 import { validate } from '../middlewares/validate';
-import { createWorkerSchema } from '../validations/admin.validation';
+import {
+  createWorkerSchema,
+  updateWorkerSchema,
+} from '../validations/admin.validation';
 import { adminLoginSchema } from '../validations/auth';
 import { convertStringPropertiesToIntegerMiddleware } from '../middlewares/body';
 
@@ -35,9 +39,21 @@ router
     validate(createWorkerSchema),
     createWorkerAdmin
   );
+
+router
+  .route('/worker/update/:workerId')
+  .put(
+    checkApiKey,
+    checkAdminToken,
+    upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]),
+    convertStringPropertiesToIntegerMiddleware,
+    validate(updateWorkerSchema),
+    updateWorkerAdmin
+  );
 router
   .route('/worker/all')
   .get(checkApiKey, checkAdminToken, findWorkersForAdmin);
+
 router
   .route('/worker/:phoneNumber')
   .get(checkApiKey, checkAdminToken, findWorkerForAdmin);

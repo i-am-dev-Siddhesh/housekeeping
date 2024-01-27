@@ -20,7 +20,7 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
       minimumRequiredMonthlyIncome,
       leavesTaken,
     } = req.body;
-console.log('req.body',req.body);
+    console.log('req.body', req.body);
 
     let profileUrl = '';
     if (req.files) {
@@ -62,6 +62,53 @@ console.log('req.body',req.body);
     });
 
     return res.status(200).json({ status: true, data: newWorker });
+  } catch (error: any) {
+    return res.status(generalErrorStatusCode(error)).json(generalError(error));
+  }
+};
+
+// @desc    Update worker from admin
+// @route   PUT /v1/admin/worker/update/:workerId
+// @access  Protected
+export const updateWorkerAdmin = async (req: Request, res: Response) => {
+  try {
+    const { workerId } = req.params;
+    let { phoneNumber, ...rest } = req.body;
+    if (phoneNumber) {
+      rest.phoneNumber = String(phoneNumber);
+    }
+
+    let profileUrl = '';
+    if (req.files) {
+      //@ts-ignore
+      const profileFiles = req.files.profile || [];
+      if (profileFiles.length > 0) {
+        console.log('profileFiles', profileFiles);
+        // Handle file upload and update profileUrl accordingly
+      }
+
+      //@ts-ignore
+      const aadhaarFiles = req.files.aadhaar || [];
+      if (aadhaarFiles.length > 0) {
+        console.log('aadhaarFiles', aadhaarFiles);
+        // Handle file upload for Aadhaar and update accordingly
+      }
+    }
+
+    const updatedWorker = await prisma.worker.update({
+      where: {
+        id: +workerId,
+      },
+      data: {
+        ...rest,
+        profileUrl,
+      },
+      include: {
+        slots: true,
+      },
+    });
+
+    return res.status(200).json({ status: true, data: updatedWorker });
   } catch (error: any) {
     return res.status(generalErrorStatusCode(error)).json(generalError(error));
   }

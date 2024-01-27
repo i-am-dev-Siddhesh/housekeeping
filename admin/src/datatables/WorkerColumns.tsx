@@ -1,5 +1,5 @@
 import { formatTimestamp } from '@/utils';
-import { Flex, Text } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -47,7 +47,7 @@ const WorkerColumns = [
     header: () => 'Action',
     cell: (rows: any) => {
       const worker = rows.cell.row.original;
-
+      const { handleUpdateWorker } = rows.cell.row.customRowProps
       return (
         <Flex
           gap={5}
@@ -56,6 +56,7 @@ const WorkerColumns = [
           justifyContent="space-between"
         >
           <Link href={`/worker/${worker.id}`}>View</Link>
+          <Button onClick={() => handleUpdateWorker(worker)}>Update</Button>
         </Flex>
       );
     },

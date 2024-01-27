@@ -1,4 +1,3 @@
-import WorkerService from '@/services/Worker';
 import {
     Button,
     Modal,
@@ -9,33 +8,19 @@ import {
     ModalHeader,
     ModalOverlay,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import AddWorkerForm from './Form';
+import WorkerForm from './Form';
 
-const CreateWorkerModal = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-   
+const CreateUpdateWorkerModal = ({ worker, isOpen, handleCloseModal }: { worker?: any, isOpen: boolean, handleCloseModal: () => void }) => {
 
     return (
         <>
-            <Button onClick={handleOpenModal}>Add Worker</Button>
-
-            <Modal isOpen={isModalOpen} onClose={handleCloseModal} size="xl">
+            <Modal isOpen={isOpen} onClose={handleCloseModal} size="xl">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Add Worker</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <AddWorkerForm onClose={handleCloseModal}  />
+                        <WorkerForm onClose={handleCloseModal} worker={worker} />
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" onClick={handleCloseModal}>
@@ -48,4 +33,4 @@ const CreateWorkerModal = () => {
     );
 };
 
-export default CreateWorkerModal;
+export default CreateUpdateWorkerModal;

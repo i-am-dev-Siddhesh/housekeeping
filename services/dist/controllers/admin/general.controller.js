@@ -8,8 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findWorkersForAdmin = exports.findWorkerForAdmin = exports.createWorkerAdmin = void 0;
+exports.findWorkersForAdmin = exports.findWorkerForAdmin = exports.updateWorkerAdmin = exports.createWorkerAdmin = void 0;
 const prisma_1 = require("../../clients/prisma");
 const utils_1 = require("../../utils");
 const errorResponse_1 = require("../../utils/errorResponse");
@@ -62,6 +73,47 @@ const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createWorkerAdmin = createWorkerAdmin;
+// @desc    Update worker from admin
+// @route   PUT /v1/admin/worker/update/:workerId
+// @access  Protected
+const updateWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { workerId } = req.params;
+        let _a = req.body, { phoneNumber } = _a, rest = __rest(_a, ["phoneNumber"]);
+        if (phoneNumber) {
+            rest.phoneNumber = String(phoneNumber);
+        }
+        let profileUrl = '';
+        if (req.files) {
+            //@ts-ignore
+            const profileFiles = req.files.profile || [];
+            if (profileFiles.length > 0) {
+                console.log('profileFiles', profileFiles);
+                // Handle file upload and update profileUrl accordingly
+            }
+            //@ts-ignore
+            const aadhaarFiles = req.files.aadhaar || [];
+            if (aadhaarFiles.length > 0) {
+                console.log('aadhaarFiles', aadhaarFiles);
+                // Handle file upload for Aadhaar and update accordingly
+            }
+        }
+        const updatedWorker = yield prisma_1.prisma.worker.update({
+            where: {
+                id: +workerId,
+            },
+            data: Object.assign(Object.assign({}, rest), { profileUrl }),
+            include: {
+                slots: true,
+            },
+        });
+        return res.status(200).json({ status: true, data: updatedWorker });
+    }
+    catch (error) {
+        return res.status((0, errorResponse_1.generalErrorStatusCode)(error)).json((0, errorResponse_1.generalError)(error));
+    }
+});
+exports.updateWorkerAdmin = updateWorkerAdmin;
 // @desc    Find worker from admin
 // @route   GET /v1/admin/worker/:phoneNumber
 // @access  Protected

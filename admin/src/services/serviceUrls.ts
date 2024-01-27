@@ -5,6 +5,7 @@ const Services = {
   
   worker: "/admin/worker",
   createWorker: "/admin/worker/create",
+  updateWorker: "/admin/worker/update",
   workers: "/admin/worker/all",
 } as const;
 

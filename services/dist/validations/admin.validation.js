@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createWorkerSchema = void 0;
+exports.updateWorkerSchema = exports.createWorkerSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createWorkerSchema = joi_1.default.object().keys({
     name: joi_1.default.string().required().messages({
@@ -45,3 +45,36 @@ exports.createWorkerSchema = joi_1.default.object().keys({
         'string.base': 'Profile URL should be a type of string',
     }),
 });
+exports.updateWorkerSchema = joi_1.default.object().keys({
+    name: joi_1.default.string().messages({
+        'string.base': 'Name should be a type of string',
+        'string.empty': 'Name cannot be an empty field',
+    }),
+    phoneNumber: joi_1.default.number().messages({
+        'number.base': 'Phone number should be a type of number',
+        'number.empty': 'Phone number cannot be an empty field',
+    }),
+    kycVerified: joi_1.default.boolean().messages({
+        'boolean.base': 'KYC verification should be a type of boolean',
+    }),
+    availableFrom: joi_1.default.date().messages({
+        'date.base': 'Available from should be a valid date',
+    }),
+    location: joi_1.default.object().keys({
+        latitude: joi_1.default.number().messages({
+            'number.base': 'Latitude should be a type of number',
+        }),
+        longitude: joi_1.default.number().messages({
+            'number.base': 'Longitude should be a type of number',
+        }),
+    }),
+    minimumRequiredMonthlyIncome: joi_1.default.number().messages({
+        'number.base': 'Minimum required monthly income should be a type of number',
+    }),
+    leavesTaken: joi_1.default.number().messages({
+        'number.base': 'Leaves taken should be a type of number',
+    }),
+    profileUrl: joi_1.default.string().messages({
+        'string.base': 'Profile URL should be a type of string',
+    }),
+}).optional();

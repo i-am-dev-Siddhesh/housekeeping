@@ -26,9 +26,11 @@ export const useYupValidationResolver = (validationSchema: any) =>
           errors: {},
         };
       } catch (errors: any) {
+        console.log('errors',errors);
+                
         return {
           values: {},
-          errors: errors.inner.reduce(
+          errors:errors?.inner?.reduce(
             (allErrors: any, currentError: any) => ({
               ...allErrors,
               [currentError.path]: {

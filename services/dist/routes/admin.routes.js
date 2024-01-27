@@ -23,6 +23,9 @@ router
     .route('/worker/create')
     .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]), body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.createWorkerSchema), general_controller_1.createWorkerAdmin);
 router
+    .route('/worker/update/:workerId')
+    .put(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }, { name: 'aadhaar' }]), body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.updateWorkerSchema), general_controller_1.updateWorkerAdmin);
+router
     .route('/worker/all')
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findWorkersForAdmin);
 router

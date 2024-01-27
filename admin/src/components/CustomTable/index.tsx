@@ -1,6 +1,5 @@
 'use client';
 import CattleColumns from '@/datatables/CattleColumns';
-import { ICattle } from '@/types/worker';
 import {
   Box,
   Button,
@@ -27,12 +26,13 @@ interface IProps {
   fetchData: (
     pageIndex: number,
     pageSize: number,
-    filterBy?: ICattle['listing_status']
+    filterBy?: any
   ) => void;
   data: any[];
   isLoading: boolean;
   count: number;
   columns?: any;
+  customRowProps?: any
 }
 
 const CustomTable = ({
@@ -41,6 +41,7 @@ const CustomTable = ({
   fetchData,
   isLoading,
   columns,
+  customRowProps
 }: IProps) => {
   const [{ pageIndex, pageSize, filterBy }, setPagination] = useState<any>({
     pageIndex: 0,
@@ -49,9 +50,9 @@ const CustomTable = ({
   });
 
   useEffect(() => {
-      fetchData(pageIndex, pageSize, filterBy);
+    fetchData(pageIndex, pageSize, filterBy);
   }, []);
-
+  const [rowState, setRowState] = useState({ additionalProp: "" });
   const pagination = useMemo(
     () => ({
       pageIndex,
@@ -141,13 +142,11 @@ const CustomTable = ({
           {table.getRowModel().rows.map((row) => {
             return (
               <Tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
+                {row.getVisibleCells().map((cell: any) => {
+                  cell.row.customRowProps = customRowProps
                   return (
                     <Td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, { ...cell.getContext() })}
                     </Td>
                   );
                 })}

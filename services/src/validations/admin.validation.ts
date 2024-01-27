@@ -40,3 +40,37 @@ export const createWorkerSchema = Joi.object().keys({
     'string.base': 'Profile URL should be a type of string',
   }),
 });
+
+export const updateWorkerSchema = Joi.object().keys({
+  name: Joi.string().messages({
+    'string.base': 'Name should be a type of string',
+    'string.empty': 'Name cannot be an empty field',
+  }),
+  phoneNumber: Joi.number().messages({
+    'number.base': 'Phone number should be a type of number',
+    'number.empty': 'Phone number cannot be an empty field',
+  }),
+  kycVerified: Joi.boolean().messages({
+    'boolean.base': 'KYC verification should be a type of boolean',
+  }),
+  availableFrom: Joi.date().messages({
+    'date.base': 'Available from should be a valid date',
+  }),
+  location: Joi.object().keys({
+    latitude: Joi.number().messages({
+      'number.base': 'Latitude should be a type of number',
+    }),
+    longitude: Joi.number().messages({
+      'number.base': 'Longitude should be a type of number',
+    }),
+  }),
+  minimumRequiredMonthlyIncome: Joi.number().messages({
+    'number.base': 'Minimum required monthly income should be a type of number',
+  }),
+  leavesTaken: Joi.number().messages({
+    'number.base': 'Leaves taken should be a type of number',
+  }),
+  profileUrl: Joi.string().messages({
+    'string.base': 'Profile URL should be a type of string',
+  }),
+}).optional();
