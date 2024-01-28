@@ -55,7 +55,7 @@ const WorkerColumns = [
           flexWrap="wrap"
           justifyContent="space-between"
         >
-          <Link href={`/worker/${worker.id}`}>View</Link>
+          <Link href={`/workers/${worker.id}`}>View</Link>
           <Button onClick={() => handleUpdateWorker(worker)}>Update</Button>
         </Flex>
       );

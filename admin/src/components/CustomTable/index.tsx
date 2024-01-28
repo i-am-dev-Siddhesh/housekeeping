@@ -1,5 +1,4 @@
 'use client';
-import CattleColumns from '@/datatables/CattleColumns';
 import {
   Box,
   Button,
@@ -64,7 +63,7 @@ const CustomTable = ({
 
   const table = useReactTable({
     data,
-    columns: columns || CattleColumns,
+    columns: columns || [],
     pageCount: Math.ceil(count / pageSize),
     state: {
       pagination,
