@@ -15,18 +15,18 @@ function getSingleCustomer(userId: number | string): Promise<any> {
   return get(`${Services.customer}/${userId}`, {});
 }
 
-function createWorker(data: any): Promise<ICreateCustomer> {
+function createCustomer(data: any): Promise<ICreateCustomer> {
   return formDataPost(Services.createCustomer, {}, data);
 }
 
-function updateCustomer(customerId: number, data: IUpdateCustomer): Promise<any> {
+function updateCustomer(customerId: number, data: any): Promise<any> {
   return formDataPut(Services.updateCustomer + '/' + customerId, {}, data);
 }
 
 const CustomerService = {
   getCustomers,
   getSingleCustomer,
-  createWorker,
+  createCustomer,
   updateCustomer,
 };
 

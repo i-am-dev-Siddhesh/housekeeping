@@ -1,10 +1,9 @@
-import { ICattle } from '@/types/cattle';
+import { ICustomer, IWorker } from '@/types/global';
 import { Badge, Box, Divider, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
-import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai';
 
 interface IProps {
-    data: ICattle | null;
+    data: ICustomer | IWorker | null;
 }
 export const DataCard = ({ data }: IProps) => {
     return (

@@ -9,7 +9,7 @@ import {
   Icon,
   IconButton,
   Link,
-  useColorModeValue
+  useColorModeValue,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
@@ -19,6 +19,9 @@ import { IconType } from 'react-icons';
 import { BiLogOut } from 'react-icons/bi';
 import CattlemartLogo from '../../../../public/cattlemart-logo.png';
 import CreateUpdateWorkerModal from '@/components/Forms/CreateUpdateWorkerModal';
+import CreateCustomer from '@/components/Buttons/CreateCustomer';
+import CreateWorker from '@/components/Buttons/CreateWorker';
+import { FaHouseUser, FaUserAstronaut } from 'react-icons/fa';
 
 export default function SimpleSidebar({
   children,
@@ -73,20 +76,52 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       overflowX="hidden"
       flexDir="column"
     >
-      <Flex mt='10' flexDir="column" gap={5} justifyContent="center" mx="8" alignItems="space-between">
-        <NextLink href='/'>
-          <Image style={{ scale: 1.3 }} src={CattlemartLogo} width={600} height={50} alt="Logo" />
+      <Flex
+        mt="10"
+        flexDir="column"
+        gap={2}
+        justifyContent="flex-start"
+        mx="5"
+        alignItems="space-between"
+      >
+        <NextLink href="/">
+          <Image
+            style={{ scale: 1.3 }}
+            src={CattlemartLogo}
+            width={600}
+            height={50}
+            alt="Logo"
+          />
         </NextLink>
-        <NextLink href='/users'>
-          <Button colorScheme="green">
-            Users
+        <NextLink href="/customers">
+          <Button
+            colorScheme="facebook"
+            justifyContent="flex-start"
+            width="100%"
+            gap={3}
+          >
+            <FaHouseUser /> Customers
           </Button>
         </NextLink>
-        <CreateUpdateWorkerModal />
+        <NextLink href="/workers">
+          <Button
+            colorScheme="facebook"
+            justifyContent="flex-start"
+            width="100%"
+            gap={3}
+          >
+            <FaUserAstronaut />
+            Workers
+          </Button>
+        </NextLink>
+      </Flex>
+      {/* Modal buttons */}
+      <Flex mt={20} mx="5" flexDir="column" gap={5}>
+        <CreateWorker />
+        <CreateCustomer />
       </Flex>
 
-
-      <Flex mx="8" mb="10" alignItems="flex-end" flex={1}>
+      <Flex mx="5" mb="10" alignItems="flex-end" flex={1}>
         <Flex flexDir="column" gap={5} w="100%">
           <AdminProfile />
           <IconButton

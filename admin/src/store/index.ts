@@ -3,11 +3,13 @@ import { createWrapper } from 'next-redux-wrapper';
 import adminRducer from './reducers/admin.reducer';
 import commonReducer from './reducers/common.reducer';
 import workerReducer from './reducers/worker.reducer';
+import customerReducer from './reducers/customer.reducer';
 
 const combinedReducer = combineReducers({
   admin: adminRducer,
   worker: workerReducer,
   common: commonReducer,
+  customer: customerReducer
 });
 
 const masterReducer = (state: any, action: any) => {
