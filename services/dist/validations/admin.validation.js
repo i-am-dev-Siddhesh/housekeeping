@@ -54,6 +54,11 @@ exports.updateWorkerSchema = joi_1.default.object().keys({
         'string.base': 'Name should be a type of string',
         'string.empty': 'Name cannot be an empty field',
     }),
+    reason: joi_1.default.string().required().messages({
+        'string.base': 'Reason should be a type of string',
+        'string.empty': 'Reason cannot be an empty field',
+        'any.required': `Reason is a required field`,
+    }),
     phoneNumber: joi_1.default.number().messages({
         'number.base': 'Phone number should be a type of number',
         'number.empty': 'Phone number cannot be an empty field',

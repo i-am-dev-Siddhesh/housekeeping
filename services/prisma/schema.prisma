@@ -18,6 +18,8 @@ model Admin {
   name     String
   email    String   @unique
   password String
+  workers   Worker[] @relation("AddedByAdmin")
+  updations  WorkerUpdationHistory[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -46,6 +48,9 @@ model Worker {
   profileUrl                String?
   orders                    Order[]
   slots                     Slot[]
+  addedBy                   Admin     @relation("AddedByAdmin", fields: [addedById], references: [id])
+  addedById                 Int
+  updations  WorkerUpdationHistory[]
   createdAt                 DateTime  @default(now())
   updatedAt                 DateTime  @updatedAt
 }
@@ -96,4 +101,14 @@ model Common {
   play_store_app_version String
   createdAt     DateTime               @default(now())
   updatedAt     DateTime?              @updatedAt
+}
+
+model WorkerUpdationHistory {
+  id         Int      @id @default(autoincrement())
+  admin      Admin    @relation(fields: [adminId], references: [id])
+  adminId    Int
+  worker     Worker   @relation(fields: [workerId], references: [id])
+  workerId   Int
+  updatedAt  DateTime @default(now())
+  reason String
 }

@@ -29,6 +29,7 @@ const errorResponse_1 = require("../../utils/errorResponse");
 // @access  Protected
 const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const admin = req.admin;
         const { name, phoneNumber, kycVerified, availableFrom, location, minimumRequiredMonthlyIncome, leavesTaken, } = req.body;
         let profileUrl = '';
         if (req.files) {
@@ -55,6 +56,7 @@ const createWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 minimumRequiredMonthlyIncome,
                 leavesTaken,
                 profileUrl,
+                addedById: admin.id,
                 slots: {
                     createMany: {
                         data: (0, utils_1.generateDefaultSlots)(),
@@ -77,8 +79,9 @@ exports.createWorkerAdmin = createWorkerAdmin;
 // @access  Protected
 const updateWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const admin = req.admin;
         const { workerId } = req.params;
-        let _a = req.body, { phoneNumber } = _a, rest = __rest(_a, ["phoneNumber"]);
+        let _a = req.body, { phoneNumber, reason } = _a, rest = __rest(_a, ["phoneNumber", "reason"]);
         if (phoneNumber) {
             rest.phoneNumber = String(phoneNumber);
         }
@@ -97,11 +100,31 @@ const updateWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 // Handle file upload for Aadhaar and update accordingly
             }
         }
+        // Create a new worker updation history
+        const workerUpdation = yield prisma_1.prisma.workerUpdationHistory.create({
+            data: {
+                reason,
+                admin: {
+                    connect: {
+                        id: admin.id,
+                    },
+                },
+                worker: {
+                    connect: {
+                        id: +workerId,
+                    },
+                },
+            },
+        });
         const updatedWorker = yield prisma_1.prisma.worker.update({
             where: {
                 id: +workerId,
             },
-            data: Object.assign(Object.assign({}, rest), { profileUrl }),
+            data: Object.assign(Object.assign({ updations: {
+                    connect: {
+                        id: workerUpdation.id,
+                    },
+                } }, rest), { profileUrl }),
             include: {
                 slots: true,
             },
@@ -127,6 +150,7 @@ const findWorkerForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, funct
             include: {
                 slots: true,
                 orders: true,
+                updations: true
                 // Include other related data as needed
             },
         });

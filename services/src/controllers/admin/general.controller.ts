@@ -11,6 +11,7 @@ import {
 // @access  Protected
 export const createWorkerAdmin = async (req: Request, res: Response) => {
   try {
+    const admin = req.admin;
     const {
       name,
       phoneNumber,
@@ -49,6 +50,7 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
         minimumRequiredMonthlyIncome,
         leavesTaken,
         profileUrl,
+        addedById: admin.id,
         slots: {
           createMany: {
             data: generateDefaultSlots(),
@@ -71,8 +73,9 @@ export const createWorkerAdmin = async (req: Request, res: Response) => {
 // @access  Protected
 export const updateWorkerAdmin = async (req: Request, res: Response) => {
   try {
+    const admin = req.admin;
     const { workerId } = req.params;
-    let { phoneNumber, ...rest } = req.body;
+    let { phoneNumber,reason, ...rest } = req.body;
     if (phoneNumber) {
       rest.phoneNumber = String(phoneNumber);
     }
@@ -94,11 +97,33 @@ export const updateWorkerAdmin = async (req: Request, res: Response) => {
       }
     }
 
+    // Create a new worker updation history
+    const workerUpdation = await prisma.workerUpdationHistory.create({
+      data: {
+        reason,
+        admin: {
+          connect: {
+            id: admin.id,
+          },
+        },
+        worker: {
+          connect: {
+            id: +workerId,
+          },
+        },
+      },
+    });
+
     const updatedWorker = await prisma.worker.update({
       where: {
         id: +workerId,
       },
       data: {
+        updations: {
+          connect: {
+            id: workerUpdation.id,
+          },
+        },
         ...rest,
         profileUrl,
       },
@@ -127,6 +152,7 @@ export const findWorkerForAdmin = async (req: Request, res: Response) => {
       include: {
         slots: true,
         orders: true,
+        updations: true
         // Include other related data as needed
       },
     });
