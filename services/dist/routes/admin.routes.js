@@ -12,6 +12,8 @@ const body_1 = require("../middlewares/body");
 const validate_1 = require("../middlewares/validate");
 const admin_validation_1 = require("../validations/admin.validation");
 const auth_2 = require("../validations/auth");
+const order_validation_1 = require("../validations/order.validation");
+const order_controller_1 = require("../controllers/admin/order.controller");
 const router = express_1.default.Router({ mergeParams: true });
 const upload = (0, multer_1.default)({ dest: 'uploads/' });
 router
@@ -43,5 +45,18 @@ router
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomersForAdmin);
 router
     .route('/customer/:customerId')
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomerForAdmin);
+// Order Routes
+router
+    .route('/order/create')
+    .post(auth_1.checkApiKey, auth_1.checkAdminToken, (0, validate_1.validate)(order_validation_1.createOrderSchema), order_controller_1.createOrderAdmin);
+router
+    .route('/order/update/:customerId')
+    .put(auth_1.checkApiKey, auth_1.checkAdminToken, body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.updateCustomerSchema), general_controller_1.updateCustomerAdmin);
+router
+    .route('/order/all')
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomersForAdmin);
+router
+    .route('/order/:customerId')
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomerForAdmin);
 exports.default = router;

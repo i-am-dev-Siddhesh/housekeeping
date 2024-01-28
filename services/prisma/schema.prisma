@@ -62,11 +62,13 @@ model Order {
   customerId       Int
   worker           Worker?   @relation(fields: [workerId], references: [id])
   workerId         Int?
+  phoneNumber      String    
   budget           Float
   location         Json?
-  time             DateTime
+  expectedStartDate   DateTime
+  actualStartDate     DateTime
   status           OrderStatus
-  slot             Slot?
+  slots             Slot[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }

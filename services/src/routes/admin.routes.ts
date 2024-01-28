@@ -24,6 +24,8 @@ import {
   updateWorkerSchema,
 } from '../validations/admin.validation';
 import { adminLoginSchema } from '../validations/auth';
+import { createOrderSchema } from '../validations/order.validation';
+import { createOrderAdmin } from '../controllers/admin/order.controller';
 
 const router = express.Router({ mergeParams: true });
 const upload = multer({ dest: 'uploads/' });
@@ -92,6 +94,33 @@ router
 
 router
   .route('/customer/:customerId')
+  .get(checkApiKey, checkAdminToken, findCustomerForAdmin);
+
+// Order Routes
+router
+  .route('/order/create')
+  .post(
+    checkApiKey,
+    checkAdminToken,
+    validate(createOrderSchema),
+    createOrderAdmin
+  );
+
+router
+  .route('/order/update/:customerId')
+  .put(
+    checkApiKey,
+    checkAdminToken,
+    convertStringPropertiesToIntegerMiddleware,
+    validate(updateCustomerSchema),
+    updateCustomerAdmin
+  );
+router
+  .route('/order/all')
+  .get(checkApiKey, checkAdminToken, findCustomersForAdmin);
+
+router
+  .route('/order/:customerId')
   .get(checkApiKey, checkAdminToken, findCustomerForAdmin);
 
 export default router;
