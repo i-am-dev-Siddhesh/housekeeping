@@ -1,4 +1,6 @@
 import { URL } from 'url';
+import argon2 from 'argon2';
+
 export const test = (url: string) => {
   return new URL(url).pathname;
 };
@@ -21,11 +23,33 @@ function generateDefaultSlots() {
     defaultSlots.push({
       startTime: currentTime,
       endTime: new Date(currentTime.getTime() + interval),
-      status: 'AVAILABLE' as "AVAILABLE", // Use the SlotStatus enum value here
+      status: 'AVAILABLE' as 'AVAILABLE', // Use the SlotStatus enum value here
     });
 
     currentTime = new Date(currentTime.getTime() + interval);
   }
 
   return defaultSlots;
+}
+
+// Hash function using Argon2
+export async function hashString(inputString: string) {
+  try {
+    const hashedString = await argon2.hash(inputString);
+    return hashedString;
+  } catch (error) {
+    console.error('Error hashing string:', error);
+    throw error;
+  }
+}
+
+// Decode function using Argon2
+export async function verifyString(inputString: string, validString: string) {
+  try {
+    const hashedString = await argon2.verify(inputString, validString);
+    return hashedString;
+  } catch (error) {
+    console.error('Error decoding string:', error);
+    throw error;
+  }
 }

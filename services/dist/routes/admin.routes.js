@@ -8,10 +8,10 @@ const multer_1 = __importDefault(require("multer"));
 const auth_controller_1 = require("../controllers/admin/auth.controller");
 const general_controller_1 = require("../controllers/admin/general.controller");
 const auth_1 = require("../middlewares/auth");
+const body_1 = require("../middlewares/body");
 const validate_1 = require("../middlewares/validate");
 const admin_validation_1 = require("../validations/admin.validation");
 const auth_2 = require("../validations/auth");
-const body_1 = require("../middlewares/body");
 const router = express_1.default.Router({ mergeParams: true });
 const upload = (0, multer_1.default)({ dest: 'uploads/' });
 router
@@ -31,4 +31,17 @@ router
 router
     .route('/worker/:phoneNumber')
     .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findWorkerForAdmin);
+// Customer Routes
+router
+    .route('/customer/create')
+    .post(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }]), body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.createCustomerSchema), general_controller_1.createCustomerAdmin);
+router
+    .route('/customer/update/:customerId')
+    .put(auth_1.checkApiKey, auth_1.checkAdminToken, upload.fields([{ name: 'profile' }]), body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.updateCustomerSchema), general_controller_1.updateCustomerAdmin);
+router
+    .route('/customer/all')
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomersForAdmin);
+router
+    .route('/customer/:customerId')
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomerForAdmin);
 exports.default = router;

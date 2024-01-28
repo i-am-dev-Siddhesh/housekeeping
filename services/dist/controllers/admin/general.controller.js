@@ -20,7 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findWorkersForAdmin = exports.findWorkerForAdmin = exports.updateWorkerAdmin = exports.createWorkerAdmin = void 0;
+exports.findCustomersForAdmin = exports.findCustomerForAdmin = exports.updateCustomerAdmin = exports.createCustomerAdmin = exports.findWorkersForAdmin = exports.findWorkerForAdmin = exports.updateWorkerAdmin = exports.createWorkerAdmin = void 0;
 const prisma_1 = require("../../clients/prisma");
 const utils_1 = require("../../utils");
 const errorResponse_1 = require("../../utils/errorResponse");
@@ -83,9 +83,9 @@ const updateWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const { workerId } = req.params;
         let _a = req.body, { phoneNumber, reason } = _a, rest = __rest(_a, ["phoneNumber", "reason"]);
         if (phoneNumber) {
-            rest.phoneNumber = String(phoneNumber);
+            phoneNumber = String(phoneNumber);
+            rest = Object.assign(Object.assign({}, rest), { phoneNumber });
         }
-        let profileUrl = '';
         if (req.files) {
             //@ts-ignore
             const profileFiles = req.files.profile || [];
@@ -120,11 +120,11 @@ const updateWorkerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functi
             where: {
                 id: +workerId,
             },
-            data: Object.assign(Object.assign({ updations: {
+            data: Object.assign({ updations: {
                     connect: {
                         id: workerUpdation.id,
                     },
-                } }, rest), { profileUrl }),
+                } }, rest),
             include: {
                 slots: true,
             },
@@ -150,8 +150,7 @@ const findWorkerForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, funct
             include: {
                 slots: true,
                 orders: true,
-                updations: true
-                // Include other related data as needed
+                updations: true,
             },
         });
         if (!worker) {
@@ -168,7 +167,7 @@ const findWorkerForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.findWorkerForAdmin = findWorkerForAdmin;
 // @desc    Find worker from admin with pagination
-// @route   GET /v1/admin/worker/
+// @route   GET /v1/admin/worker/all
 // @query   page (optional) - Page number (default: 1)
 // @query   pageSize (optional) - Number of items per page (default: 10)
 // @access  Protected
@@ -189,3 +188,121 @@ const findWorkersForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.findWorkersForAdmin = findWorkersForAdmin;
+// @desc    Create customer from admin
+// @route   POST /v1/admin/customer/create
+// @access  Protected
+const createCustomerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let { name, phoneNumber, email, location, password } = req.body;
+        password = yield (0, utils_1.hashString)(password);
+        let profileUrl = '';
+        if (req.files) {
+            //@ts-ignore
+            const profileFiles = req.files.profile || [];
+            if (profileFiles.length > 0) {
+                console.log('profileFiles', profileFiles);
+            }
+        }
+        const newCustomer = yield prisma_1.prisma.customer.create({
+            data: {
+                name,
+                password,
+                email,
+                phoneNumber: String(phoneNumber),
+                location,
+                profileUrl,
+            },
+        });
+        return res.status(200).json({ status: true, data: newCustomer });
+    }
+    catch (error) {
+        return res.status((0, errorResponse_1.generalErrorStatusCode)(error)).json((0, errorResponse_1.generalError)(error));
+    }
+});
+exports.createCustomerAdmin = createCustomerAdmin;
+// @desc    Update customer from admin
+// @route   PUT /v1/admin/customer/update/:customerId
+// @access  Protected
+const updateCustomerAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { customerId } = req.params;
+        let _b = req.body, { phoneNumber, password } = _b, rest = __rest(_b, ["phoneNumber", "password"]);
+        if (phoneNumber) {
+            phoneNumber = String(phoneNumber);
+            rest = Object.assign(Object.assign({}, rest), { phoneNumber });
+        }
+        if (password) {
+            password = yield (0, utils_1.hashString)(password);
+            rest = Object.assign(Object.assign({}, rest), { password });
+        }
+        if (req.files) {
+            //@ts-ignore
+            const profileFiles = req.files.profile || [];
+            if (profileFiles.length > 0) {
+                console.log('profileFiles', profileFiles);
+                // Handle file upload and update profileUrl accordingly
+            }
+        }
+        const updatedCustomer = yield prisma_1.prisma.customer.update({
+            where: {
+                id: +customerId,
+            },
+            data: Object.assign({}, rest),
+        });
+        return res.status(200).json({ status: true, data: updatedCustomer });
+    }
+    catch (error) {
+        return res.status((0, errorResponse_1.generalErrorStatusCode)(error)).json((0, errorResponse_1.generalError)(error));
+    }
+});
+exports.updateCustomerAdmin = updateCustomerAdmin;
+// @desc    Find worker from admin
+// @route   GET /v1/admin/customer/:customerId
+// @access  Protected
+const findCustomerForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const customerId = req.params.customerId;
+        // Fetch worker data by phone number
+        const customer = yield prisma_1.prisma.customer.findUnique({
+            where: {
+                id: +customerId,
+            },
+            include: {
+                orders: true,
+            },
+        });
+        if (!customer) {
+            throw {
+                statusCode: 404,
+                message: 'Customer not found',
+            };
+        }
+        return res.status(200).json({ status: true, data: customer });
+    }
+    catch (error) {
+        return res.status((0, errorResponse_1.generalErrorStatusCode)(error)).json((0, errorResponse_1.generalError)(error));
+    }
+});
+exports.findCustomerForAdmin = findCustomerForAdmin;
+// @desc    Find customer from admin with pagination
+// @route   GET /v1/admin/customer/all
+// @query   page (optional) - Page number (default: 1)
+// @query   pageSize (optional) - Number of items per page (default: 10)
+// @access  Protected
+const findCustomersForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const page = parseInt(req.query.page, 10) || 1;
+        const pageSize = parseInt(req.query.pageSize, 10) || 10;
+        const skip = (page - 1) * pageSize;
+        // Fetch customers with pagination
+        const customers = yield prisma_1.prisma.customer.findMany({
+            skip,
+            take: pageSize,
+        });
+        return res.status(200).json({ status: true, data: customers });
+    }
+    catch (error) {
+        return res.status((0, errorResponse_1.generalErrorStatusCode)(error)).json((0, errorResponse_1.generalError)(error));
+    }
+});
+exports.findCustomersForAdmin = findCustomersForAdmin;

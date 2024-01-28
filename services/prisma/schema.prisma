@@ -27,6 +27,7 @@ model Admin {
 model Customer {
   id          Int       @id @default(autoincrement())
   name        String
+  password String
   email       String    @unique
   phoneNumber       String    @unique
   profileUrl  String?
