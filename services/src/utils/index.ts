@@ -1,35 +1,19 @@
 import { URL } from 'url';
 import argon2 from 'argon2';
+import { SlotStatus } from '@prisma/client';
 
 export const test = (url: string) => {
   return new URL(url).pathname;
 };
 
-// Helper function to generate default slots
-export // Helper function to generate default slots
-function generateDefaultSlots() {
-  const defaultSlots = [];
-  const startTime = new Date();
-  startTime.setHours(9, 0, 0, 0); // Set start time to 9:00 AM
 
-  const endTime = new Date();
-  endTime.setHours(18, 0, 0, 0); // Set end time to 6:00 PM
+export function generateDefaultSlots(): any[] {
+  const totalSlots = 16; // Assuming you have 16 slots in a day
 
-  const interval = 30 * 60 * 1000; // 30 minutes in milliseconds
-
-  let currentTime = startTime;
-
-  while (currentTime < endTime) {
-    defaultSlots.push({
-      startTime: currentTime,
-      endTime: new Date(currentTime.getTime() + interval),
-      status: 'AVAILABLE' as 'AVAILABLE', // Use the SlotStatus enum value here
-    });
-
-    currentTime = new Date(currentTime.getTime() + interval);
-  }
-
-  return defaultSlots;
+  return Array.from({ length: totalSlots }, (_, index) => ({
+    slotNumber: index + 1,
+    status: 'AVAILABLE' as SlotStatus, // Use the SlotStatus enum value here
+  }));
 }
 
 // Hash function using Argon2

@@ -68,7 +68,7 @@ model Order {
   expectedStartDate   DateTime
   actualStartDate     DateTime
   status           OrderStatus
-  slots             Slot[]
+  slots            Slot[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 }
@@ -85,11 +85,10 @@ model Slot {
   id               Int       @id @default(autoincrement())
   worker           Worker    @relation(fields: [workerId], references: [id])
   workerId         Int
-  startTime        DateTime
-  endTime          DateTime
+  slotNumber       Int
   status           SlotStatus
   order            Order?    @relation(fields: [orderId], references: [id])
-  orderId          Int? @unique 
+  orderId          Int? 
 }
 
 model OTP {

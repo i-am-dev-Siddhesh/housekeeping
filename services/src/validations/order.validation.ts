@@ -1,6 +1,11 @@
 import Joi from 'joi';
 
 export const createOrderSchema = Joi.object().keys({
+  customerId: Joi.number().required().messages({
+    'string.base': 'Customer id should be a type of string',
+    'string.empty': 'Customer id cannot be an empty field',
+    'any.required': 'Customer id is a required field',
+  }),
   budget: Joi.number().required().messages({
     'string.base': 'Budget should be a type of string',
     'string.empty': 'Budget cannot be an empty field',
@@ -46,19 +51,23 @@ export const createOrderSchema = Joi.object().keys({
         'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
 
-  slot: Joi.array()
+    slots: Joi.array()
     .items(Joi.number().integer().min(1).max(16))
     .required()
     .messages({
-      'array.base': 'Slot must be an array',
-      'array.empty': 'Slot is required',
-      'any.required': 'Slot is required',
+      'array.base': 'Slots must be an array',
+      'array.empty': 'Slotss is required',
+      'any.required': 'Slots is required',
       'array.includes':
-        'Invalid slot. Each element must be a number between 1 and 16',
+        'Invalid slots. Each element must be a number between 1 and 16',
     }),
 });
 
 export const updateOrderSchema = Joi.object().keys({
+  customerId: Joi.number().messages({
+    'string.base': 'Customer id should be a type of string',
+    'string.empty': 'Customer id cannot be an empty field',
+  }),
   budget: Joi.number().optional().messages({
     'number.base': 'Budget should be a type of number',
     'any.required': 'Budget is a required field',
@@ -105,12 +114,12 @@ export const updateOrderSchema = Joi.object().keys({
         'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
 
-  slot: Joi.array()
+    slots: Joi.array()
     .items(Joi.number().integer().min(1).max(16))
     .optional()
     .messages({
-      'array.base': 'Slot must be an array',
+      'array.base': 'Slots must be an array',
       'array.includes':
-        'Invalid slot. Each element must be a number between 1 and 16',
+        'Invalid slots. Each element must be a number between 1 and 16',
     }),
 });

@@ -51,12 +51,12 @@ router
     .route('/order/create')
     .post(auth_1.checkApiKey, auth_1.checkAdminToken, (0, validate_1.validate)(order_validation_1.createOrderSchema), order_controller_1.createOrderAdmin);
 router
-    .route('/order/update/:customerId')
-    .put(auth_1.checkApiKey, auth_1.checkAdminToken, body_1.convertStringPropertiesToIntegerMiddleware, (0, validate_1.validate)(admin_validation_1.updateCustomerSchema), general_controller_1.updateCustomerAdmin);
+    .route('/order/update/:orderId')
+    .put(auth_1.checkApiKey, auth_1.checkAdminToken, (0, validate_1.validate)(order_validation_1.updateOrderSchema), order_controller_1.updateOrderAdmin);
 router
     .route('/order/all')
-    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomersForAdmin);
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, order_controller_1.findOrdersForAdmin);
 router
-    .route('/order/:customerId')
-    .get(auth_1.checkApiKey, auth_1.checkAdminToken, general_controller_1.findCustomerForAdmin);
+    .route('/order/:orderId')
+    .get(auth_1.checkApiKey, auth_1.checkAdminToken, order_controller_1.findOrderForAdmin);
 exports.default = router;

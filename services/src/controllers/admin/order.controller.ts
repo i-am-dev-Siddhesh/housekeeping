@@ -1,19 +1,27 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../clients/prisma';
-import { hashString } from '../../utils';
 import {
   generalError,
   generalErrorStatusCode,
 } from '../../utils/errorResponse';
+import { findAvailableWorkers } from '../../utils/order';
 
 // @desc    Create order from admin
 // @route   POST /v1/admin/order/create
 // @access  Protected
 export const createOrderAdmin = async (req: Request, res: Response) => {
   try {
+    const { slots, ...data } = req.body;
+    const availableWorkers = await findAvailableWorkers(slots);
+    const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+    const chosenWorker = availableWorkers[randomIndex];
+
     const newOrder = await prisma.order.create({
       data: {
-        ...req.body,
+        ...data,
+        slots: {
+          connect: chosenWorker.slots,
+        },
       },
     });
 
@@ -24,41 +32,26 @@ export const createOrderAdmin = async (req: Request, res: Response) => {
 };
 
 // @desc    Update order from admin
-// @route   PUT /v1/admin/order/update/:OrderId
+// @route   PUT /v1/admin/order/update/:orderId
 // @access  Protected
 export const updateOrderAdmin = async (req: Request, res: Response) => {
   try {
-    const { OrderId } = req.params;
-    let { phoneNumber, password, ...rest } = req.body;
-    if (phoneNumber) {
-      phoneNumber = String(phoneNumber);
-      rest = {
-        ...rest,
-        phoneNumber,
-      };
-    }
-    if (password) {
-      password = await hashString(password);
-      rest = {
-        ...rest,
-        password,
+    const { orderId } = req.params;
+    const { slots, ...data } = req.body;
+
+    if (slots) {
+      const availableWorkers = await findAvailableWorkers(slots);
+      const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+      const chosenWorker = availableWorkers[randomIndex];
+      data.slots = {
+        connect: chosenWorker.slots,
       };
     }
 
-    if (req.files) {
-      //@ts-ignore
-      const profileFiles = req.files.profile || [];
-      if (profileFiles.length > 0) {
-        console.log('profileFiles', profileFiles);
-        // Handle file upload and update profileUrl accordingly
-      }
-    }
     const updatedOrder = await prisma.order.update({
+      data,
       where: {
-        id: +OrderId,
-      },
-      data: {
-        ...rest,
+        id: +orderId,
       },
     });
 
@@ -69,19 +62,18 @@ export const updateOrderAdmin = async (req: Request, res: Response) => {
 };
 
 // @desc    Find worker from admin
-// @route   GET /v1/admin/order/:OrderId
+// @route   GET /v1/admin/order/:orderId
 // @access  Protected
 export const findOrderForAdmin = async (req: Request, res: Response) => {
   try {
-    const OrderId = req.params.OrderId;
-    // Fetch worker data by phone number
+    const orderId = req.params.orderId;
     const order = await prisma.order.findUnique({
       where: {
-        id: +OrderId,
+        id: +orderId,
       },
       include: {
         customer: true,
-        slot: true,
+        slots: true,
       },
     });
 

@@ -19,24 +19,12 @@ const test = (url) => {
     return new url_1.URL(url).pathname;
 };
 exports.test = test;
-// Helper function to generate default slots
 function generateDefaultSlots() {
-    const defaultSlots = [];
-    const startTime = new Date();
-    startTime.setHours(9, 0, 0, 0); // Set start time to 9:00 AM
-    const endTime = new Date();
-    endTime.setHours(18, 0, 0, 0); // Set end time to 6:00 PM
-    const interval = 30 * 60 * 1000; // 30 minutes in milliseconds
-    let currentTime = startTime;
-    while (currentTime < endTime) {
-        defaultSlots.push({
-            startTime: currentTime,
-            endTime: new Date(currentTime.getTime() + interval),
-            status: 'AVAILABLE', // Use the SlotStatus enum value here
-        });
-        currentTime = new Date(currentTime.getTime() + interval);
-    }
-    return defaultSlots;
+    const totalSlots = 16; // Assuming you have 16 slots in a day
+    return Array.from({ length: totalSlots }, (_, index) => ({
+        slotNumber: index + 1,
+        status: 'AVAILABLE', // Use the SlotStatus enum value here
+    }));
 }
 exports.generateDefaultSlots = generateDefaultSlots;
 // Hash function using Argon2

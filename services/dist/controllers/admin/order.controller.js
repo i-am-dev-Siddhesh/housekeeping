@@ -22,15 +22,21 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findOrdersForAdmin = exports.findOrderForAdmin = exports.updateOrderAdmin = exports.createOrderAdmin = void 0;
 const prisma_1 = require("../../clients/prisma");
-const utils_1 = require("../../utils");
 const errorResponse_1 = require("../../utils/errorResponse");
+const order_1 = require("../../utils/order");
 // @desc    Create order from admin
 // @route   POST /v1/admin/order/create
 // @access  Protected
 const createOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const _a = req.body, { slots } = _a, data = __rest(_a, ["slots"]);
+        const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
+        const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+        const chosenWorker = availableWorkers[randomIndex];
         const newOrder = yield prisma_1.prisma.order.create({
-            data: Object.assign({}, req.body),
+            data: Object.assign(Object.assign({}, data), { slots: {
+                    connect: chosenWorker.slots,
+                } }),
         });
         return res.status(200).json({ status: true, data: newOrder });
     }
@@ -40,33 +46,25 @@ const createOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.createOrderAdmin = createOrderAdmin;
 // @desc    Update order from admin
-// @route   PUT /v1/admin/order/update/:OrderId
+// @route   PUT /v1/admin/order/update/:orderId
 // @access  Protected
 const updateOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { OrderId } = req.params;
-        let _a = req.body, { phoneNumber, password } = _a, rest = __rest(_a, ["phoneNumber", "password"]);
-        if (phoneNumber) {
-            phoneNumber = String(phoneNumber);
-            rest = Object.assign(Object.assign({}, rest), { phoneNumber });
-        }
-        if (password) {
-            password = yield (0, utils_1.hashString)(password);
-            rest = Object.assign(Object.assign({}, rest), { password });
-        }
-        if (req.files) {
-            //@ts-ignore
-            const profileFiles = req.files.profile || [];
-            if (profileFiles.length > 0) {
-                console.log('profileFiles', profileFiles);
-                // Handle file upload and update profileUrl accordingly
-            }
+        const { orderId } = req.params;
+        const _b = req.body, { slots } = _b, data = __rest(_b, ["slots"]);
+        if (slots) {
+            const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
+            const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+            const chosenWorker = availableWorkers[randomIndex];
+            data.slots = {
+                connect: chosenWorker.slots,
+            };
         }
         const updatedOrder = yield prisma_1.prisma.order.update({
+            data,
             where: {
-                id: +OrderId,
+                id: +orderId,
             },
-            data: Object.assign({}, rest),
         });
         return res.status(200).json({ status: true, data: updatedOrder });
     }
@@ -76,19 +74,18 @@ const updateOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.updateOrderAdmin = updateOrderAdmin;
 // @desc    Find worker from admin
-// @route   GET /v1/admin/order/:OrderId
+// @route   GET /v1/admin/order/:orderId
 // @access  Protected
 const findOrderForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const OrderId = req.params.OrderId;
-        // Fetch worker data by phone number
+        const orderId = req.params.orderId;
         const order = yield prisma_1.prisma.order.findUnique({
             where: {
-                id: +OrderId,
+                id: +orderId,
             },
             include: {
                 customer: true,
-                slot: true,
+                slots: true,
             },
         });
         if (!order) {
