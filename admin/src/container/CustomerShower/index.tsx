@@ -1,21 +1,15 @@
-import WorkerColumns from '@/datatables/WorkerColumns';
-import WorkerService from '@/services/Worker';
+import CustomerColumns from '@/datatables/CustomerColumns';
+import CustomerService from '@/services/Customer';
+import { setCustomerIsLoading, setCustomers } from '@/store/reducers/customer.reducer';
+import { selectCustomers } from '@/store/selectors/customer';
 import {
-  setWorkerIsLoading,
-  setWorkers,
-} from '@/store/reducers/worker.reducer';
-import {
-  selectWorkers,
   selectWorkersCount,
-  selectWorkersLoading,
+  selectWorkersLoading
 } from '@/store/selectors/worker';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomTable from '../../components/CustomTable';
 import CreateUpdateCustomerModal from '../../components/Forms/CreateUpdateCustomerModal';
-import { selectCustomers } from '@/store/selectors/customer';
-import CustomerService from '@/services/Customer';
-import { setCustomerIsLoading, setCustomers } from '@/store/reducers/customer.reducer';
 
 const CustomerShower = () => {
   const dispatch = useDispatch();
@@ -48,7 +42,7 @@ const CustomerShower = () => {
         count={count}
         data={customers}
         isLoading={isLoading}
-        columns={WorkerColumns}
+        columns={CustomerColumns}
         customRowProps={{ handleUpdateCustomer: setCustomer }}
       />
       <CreateUpdateCustomerModal customer={customer} isOpen={customer ? true : false} handleCloseModal={() => setCustomer(undefined)} />

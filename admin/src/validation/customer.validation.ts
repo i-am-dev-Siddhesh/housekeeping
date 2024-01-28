@@ -23,11 +23,14 @@ export const customerUpdateValidationSchema = yup.object({
   location: yup.object(),
   profile: yup
     .mixed()
-    .required('Please upload your profile picture.')
+    .nullable()
+    .transform((originalValue, originalObject) =>
+      originalObject.profile ? originalValue : null
+    )
     .test(
       'fileSize',
       'Profile picture size must be less than 1 MB.',
       // @ts-ignore
-      (value) => value && value[0]?.size <= 1024000
+      (value) => !value || (value[0]?.size && value[0]?.size <= 1024000)
     ),
 });

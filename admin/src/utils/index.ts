@@ -48,8 +48,8 @@ export function parseLocationData(dataString: string | JSON) {
   }
   // Return null or handle the case when parsing is not successful
   return {
-    lat: +DEFAULT_LOCATION.raw.lat,
-    lon: +DEFAULT_LOCATION.raw.lon,
-    label: DEFAULT_LOCATION.label,
+    lat: undefined,
+    lon:undefined,
+    label: undefined,
   };
 }

@@ -46,20 +46,17 @@ const CustomerForm = ({ onClose, customer }: IProps) => {
     resolver,
   });
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (values: any) => {
     try {
-      let values = data
-      const location = {
-        lat: values?.location?.y,
-        lon: values?.location?.x,
-        label: values?.location?.label,
-      };
-
-      delete values.location;
       const formData = new FormData();
-console.log('data',data.location);
-
-      Object.entries(values).forEach(([key, value]) => {
+      let data = { ...values }
+      if (data.location) {
+        formData.append('location[lat]', data.location.lat);
+        formData.append('location[lon]', data.location.lon);
+        formData.append('location[label]', data.location.label);
+      }
+      delete data.location
+      Object.entries(data).forEach(([key, value]) => {
         if (value instanceof FileList) {
           // If it's a FileList (which is the type for file inputs), append each file
           for (let i = 0; i < value.length; i++) {
@@ -71,10 +68,8 @@ console.log('data',data.location);
           formData.append(key, value);
         }
       });
-      
-      formData.append('location[lat]', location.lat);
-      formData.append('location[lon]', location.lon);
-      formData.append('location[label]', location.label);
+
+
       const resp = customer
         ? await CustomerService.updateCustomer(customer.id, formData)
         : await CustomerService.createCustomer(formData);
@@ -138,7 +133,7 @@ console.log('data',data.location);
           name="name"
           placeholder="Enter your name"
         />
-        
+
         <CustomInput
           register={register}
           error={(errors['email']?.message as string) || ''}

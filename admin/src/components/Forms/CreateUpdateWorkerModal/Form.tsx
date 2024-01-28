@@ -38,18 +38,16 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
     resolver
   });
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (values: any) => {
     try {
-
-      const location = {
-        lat: data?.location?.y,
-        lon: data?.location?.x,
-        label: data?.location?.label,
-      };
-
-      delete data.location;
       const formData = new FormData();
-
+      let data = { ...values }
+      if (data.location) {
+        formData.append('location[lat]', data.location.lat);
+        formData.append('location[lon]', data.location.lon);
+        formData.append('location[label]', data.location.label);
+      }
+      delete data.location
       Object.entries(data).forEach(([key, value]) => {
         if (value instanceof FileList) {
           // If it's a FileList (which is the type for file inputs), append each file
@@ -62,9 +60,7 @@ const WorkerForm = ({ onClose, worker }: IProps) => {
           formData.append(key, value);
         }
       });
-      formData.append('location[lat]', location.lat);
-      formData.append('location[lon]', location.lon);
-      formData.append('location[label]', location.label);
+
       const resp = worker ? await WorkerService.updateWorker(worker.id, formData) : await WorkerService.createWorker(formData);
       dispatch(worker ? updateWorker({ data: resp.data }) : addWorker({ data: resp.data }));
       toast({

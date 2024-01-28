@@ -26,7 +26,7 @@ const CreateUpdateCustomerModal = ({ customer, isOpen, handleCloseModal }: IProp
                     <ModalHeader>{customer ? "Update" : "Add"} Customer</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <CustomerForm onClose={handleCloseModal} customer={customer} />
+                        {customer ? <CustomerForm onClose={handleCloseModal} customer={customer} /> : <CustomerForm onClose={handleCloseModal} />}
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" onClick={handleCloseModal}>

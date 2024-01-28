@@ -15,14 +15,19 @@ import { useCallback, useEffect, useState } from 'react';
 const SearchField = ({ setValue, value }: any) => {
     const [searchedLocations, setSearchedLocations] = useState<ILocationData[]>(
         []
-    );
+    ); 
     const [selectedLocation, setSelectedLocation] =
         useState<ILocationData | null>();
     const [searchQuery, setSearchQuery] = useState<any>(value.label);
 
     const handleItemClick = (location: ILocationData) => {
         setSelectedLocation(location);
-        setValue('location', location);
+        const customlocation = {
+            lat: location?.y,
+            lon: location?.x,
+            label: location?.label,
+          };
+        setValue('location', customlocation);
         setSearchQuery(location.label);
         setSearchedLocations([]);
     };
@@ -33,7 +38,7 @@ const SearchField = ({ setValue, value }: any) => {
         setSearchedLocations(results);
     }, []);
 
-    
+
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (searchQuery && searchQuery !== value.label && searchQuery !== selectedLocation?.label) {
@@ -43,6 +48,12 @@ const SearchField = ({ setValue, value }: any) => {
 
         return () => clearTimeout(delayDebounceFn);
     }, [searchQuery]);
+
+    useEffect(() => {
+        if (value?.lat) {
+            setSearchQuery(value.label)
+        }
+    }, [value?.lat])
 
     const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
