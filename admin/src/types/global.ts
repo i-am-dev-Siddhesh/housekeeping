@@ -1,29 +1,17 @@
-export interface IAdmin {
-  id: number;
-  name: string;
-  email: string;
-  password: string;
-  workers: IWorker[];
-  updations: IWorkerUpdationHistory[];
-  createdAt: Date;
-  updatedAt: Date;
-}
 export interface ILocation {
   lat: number;
   lon: number;
   label: string;
 }
 
-
 export interface IUpdateCustomer {
-    id: number;
-    name?: string;
-    password?: string;
-    email?: string;
-    phoneNumber?: string;
-    location?: ILocation;
-  }
-  
+  id: number;
+  name?: string;
+  password?: string;
+  email?: string;
+  phoneNumber?: string;
+  location?: ILocation;
+}
 
 export interface ICreateCustomer {
   id: number;
@@ -33,6 +21,35 @@ export interface ICreateCustomer {
   phoneNumber: string;
   location: ILocation | null;
 }
+export enum SlotStatus {
+  AVAILABLE = 'AVAILABLE',
+  BOOKED = 'BOOKED',
+  RESERVED = 'RESERVED',
+}
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  ASSIGNED = 'ASSIGNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface ILocation {
+  lat: number;
+  lon: number;
+  label: string;
+}
+export interface Admin {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  workers: Worker[];
+  updations: WorkerUpdationHistory[];
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export interface ICustomer {
   id: number;
@@ -40,8 +57,8 @@ export interface ICustomer {
   password: string;
   email: string;
   phoneNumber: string;
-  profileUrl?: string | null;
-  location?: ILocation | null;
+  profileUrl?: string;
+  location?: JSON;
   orders: IOrder[];
   createdAt: Date;
   updatedAt: Date;
@@ -53,67 +70,78 @@ export interface IWorker {
   phoneNumber: string;
   kycVerified: boolean;
   availableFrom: Date;
-  location?: ILocation | null;
+  location?: JSON;
   minimumRequiredMonthlyIncome: number;
   leavesTaken: number;
-  profileUrl?: string | null;
+  profileUrl?: string;
   orders: IOrder[];
   slots: ISlot[];
-  addedBy: IAdmin;
-  updations: IWorkerUpdationHistory[];
+  addedBy: Admin;
+  addedById: number;
+  updations: WorkerUpdationHistory[];
   createdAt: Date;
   updatedAt: Date;
 }
 
+export interface ICreateOrder {
+  customerId: number;
+  worker?: Worker;
+  workerId?: number;
+  phoneNumber: string;
+  budget: number;
+  location?: JSON;
+  expectedStartDate: Date;
+  actualStartDate: Date;
+  status: OrderStatus;
+  slots: number[];
+}
 export interface IOrder {
   id: number;
   customer: ICustomer;
-  worker?: IWorker | null;
+  customerId: number;
+  worker?: Worker;
+  workerId?: number;
+  phoneNumber: string;
   budget: number;
-  location?: ILocation | null;
-  time: Date;
+  location?: JSON;
+  expectedStartDate: Date;
+  actualStartDate: Date;
   status: OrderStatus;
-  slot?: ISlot | null;
+  slots: ISlot[];
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface ISlot {
   id: number;
-  worker: IWorker;
-  startTime: Date;
-  endTime: Date;
+  worker: Worker;
+  workerId: number;
+  slotNumber: number;
   status: SlotStatus;
-  order?: IOrder | null;
+  order?: IOrder;
+  orderId?: number;
 }
 
-export interface IOTP {
+export interface OTP {
   id: number;
   phoneNumber: string;
   otp: string;
   expirationTime: Date;
 }
 
-export interface ICommon {
+export interface Common {
   id: number;
-  play_store_app_version: string;
+  playStoreAppVersion: string;
   createdAt: Date;
-  updatedAt?: Date | null;
+  updatedAt?: Date;
 }
 
-export interface IWorkerUpdationHistory {
+export interface WorkerUpdationHistory {
   id: number;
-  admin: IAdmin;
-  worker: IWorker;
+  admin: Admin;
+  adminId: number;
+  worker: Worker;
+  workerId: number;
   updatedAt: Date;
   reason: string;
 }
-
-// Enum types
-type OrderStatus =
-  | 'PENDING'
-  | 'ASSIGNED'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'CANCELLED';
-type SlotStatus = 'AVAILABLE' | 'BOOKED' | 'RESERVED';

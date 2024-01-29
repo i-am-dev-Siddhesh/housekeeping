@@ -1,0 +1,226 @@
+import OrderService from '@/services/Order/index';
+import { addOrder, updateOrder } from '@/store/reducers/order.reducer';
+import { IOrder } from '@/types/global';
+import { errorFormatter, useYupValidationResolver } from '@/utils/helpers';
+import {
+  createOrderSchema,
+  updateOrderSchema,
+} from '@/validation/order.validation';
+import { Button, Flex, useToast } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
+import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import CustomInput from '../FormControls';
+import { parseLocationData } from '@/utils';
+
+const GeolocationMap = dynamic(() => import('../../GeolocationMap'), {
+  ssr: false,
+  loading: () => <p>Loading map...</p>,
+});
+const SearchField = dynamic(() => import('../../GeolocationMap/SearchField'), {
+  ssr: false,
+  loading: () => <p>Loading map...</p>,
+});
+
+interface IProps {
+  onClose: () => void;
+  order?: IOrder;
+}
+const OrderForm = ({ onClose, order }: IProps) => {
+  const toast = useToast();
+  const dispatch = useDispatch();
+
+  const resolver = useYupValidationResolver(
+    order ? updateOrderSchema : createOrderSchema
+  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    setValue,
+    reset,
+  } = useForm({
+    resolver,
+  });
+
+  const handleFormSubmit = async (values: any) => {
+    try {
+      const formData = new FormData();
+      let data = { ...values };
+      if (data.location) {
+        formData.append('location[lat]', data.location.lat);
+        formData.append('location[lon]', data.location.lon);
+        formData.append('location[label]', data.location.label);
+      }
+      delete data.location;
+      Object.entries(data).forEach(([key, value]) => {
+        if (value instanceof FileList) {
+          // If it's a FileList (which is the type for file inputs), append each file
+          for (let i = 0; i < value.length; i++) {
+            formData.append(key, value[i]);
+          }
+        } else if (value) {
+          // For regular form fields
+          // @ts-ignore
+          formData.append(key, value);
+        }
+      });
+
+      const resp = order
+        ? await OrderService.updateOrder(order.id, formData)
+        : await OrderService.createOrder(formData);
+      dispatch(
+        order ? updateOrder({ data: resp.data }) : addOrder({ data: resp.data })
+      );
+      toast({
+        title: 'Success',
+        description: `Order ${order ? 'updated' : 'added'} successfully!!!`,
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      const message = errorFormatter(error);
+      toast({
+        title: 'Error',
+        description: message,
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // useEffect(() => {
+  //   if (order) {
+  //     reset({
+  //       location: order.location,
+  //       phoneNumber: order.phoneNumber,
+  //       // email: order.email,
+  //     });
+  //   }
+  // }, [order]);
+
+  return (
+    <Flex
+      gap={5}
+      // minH="10rem"
+      overflowY="scroll"
+      overflowX="scroll"
+      as="form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(handleFormSubmit)();
+      }}
+    >
+      <Flex gap={5} flexDir="column" w="100%" bg="#ffffff">
+        {formFields.map((item, index) => {
+          return (
+            <div key={item.name + '-' + index}>
+              <CustomInput
+                register={register}
+                error={(errors[item.name]?.message as string) || ''}
+                type={item.type}
+                helperText={item.helperText}
+                label={item.label}
+                name={item.name}
+                placeholder={item.placeholder}
+                options={item?.options}
+              />
+            </div>
+          );
+        })}
+
+        <SearchField
+          register={register}
+          errors={errors}
+          value={parseLocationData(watch('location'))}
+          setValue={setValue}
+        />
+
+        <GeolocationMap
+          lat={parseLocationData(watch('location'))?.lat}
+          long={parseLocationData(watch('location'))?.lon}
+        />
+
+        <Button colorScheme="green" type="submit" isLoading={isSubmitting}>
+          Submit
+        </Button>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default OrderForm;
+
+export const formFields = [
+  {
+    name: 'customerPhoneNumber',
+    label: 'Customer Phone Number',
+    helperText: 'Customer phone number',
+    type: 'number',
+    placeholder: 'Enter customer phone number here',
+  },
+  {
+    name: 'budget',
+    label: 'Budget',
+    helperText: 'Enter budget here',
+    type: 'select',
+    placeholder: 'Enter the budget',
+    options: [
+      {
+        label: '<5000',
+        value: 5000,
+      },
+      {
+        label: '5000 - 7500',
+        value: 7500,
+      },
+      {
+        label: '7000 - 10000',
+        value: 10000,
+      },
+      {
+        label: '>10000',
+        value: 10001,
+      },
+    ],
+  },
+  {
+    name: 'phoneNumber',
+    label: 'Phone Number',
+    helperText: 'Enter phone number here',
+    type: 'number',
+    placeholder: 'Enter your phone number',
+  },
+  {
+    name: 'expectedStartDate',
+    label: 'Expected Start Date',
+    helperText: 'Enter expected start date here',
+    type: 'date',
+    placeholder: 'Select expected start date',
+  },
+  {
+    name: 'actualStartDate',
+    label: 'Actual Start Date',
+    helperText: 'Enter actual start date here',
+    type: 'date',
+    placeholder: 'Select actual start date',
+  },
+  // {
+  //   name: 'status',
+  //   label: 'Status',
+  //   helperText: 'Select order status',
+  //   type: 'select',
+  //   placeholder: 'Select order status',
+  //   options: [
+  //     { label: 'Pending', value: 'PENDING' },
+  //     { label: 'Assigned', value: 'ASSIGNED' },
+  //     { label: 'In Progress', value: 'IN_PROGRESS' },
+  //     { label: 'Completed', value: 'COMPLETED' },
+  //     { label: 'Cancelled', value: 'CANCELLED' },
+  //   ]
+  // },
+];

@@ -2,14 +2,16 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
 import adminRducer from './reducers/admin.reducer';
 import commonReducer from './reducers/common.reducer';
-import workerReducer from './reducers/worker.reducer';
 import customerReducer from './reducers/customer.reducer';
+import orderReducer from './reducers/order.reducer';
+import workerReducer from './reducers/worker.reducer';
 
 const combinedReducer = combineReducers({
   admin: adminRducer,
   worker: workerReducer,
   common: commonReducer,
-  customer: customerReducer
+  customer: customerReducer,
+  order: orderReducer,
 });
 
 const masterReducer = (state: any, action: any) => {

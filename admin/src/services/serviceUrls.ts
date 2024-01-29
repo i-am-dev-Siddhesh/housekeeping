@@ -13,6 +13,11 @@ const Services = {
   updateCustomer: "/admin/customer/update",
   customers: "/admin/customer/all",
 
+  order: "/admin/order",
+  createOrder: "/admin/order/create",
+  updateOrder: "/admin/order/update",
+  orders: "/admin/order/all",
+
 } as const;
 
 export default Services;

@@ -29,7 +29,22 @@ const order_1 = require("../../utils/order");
 // @access  Protected
 const createOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const _a = req.body, { slots } = _a, data = __rest(_a, ["slots"]);
+        const _a = req.body, { slots, customerPhoneNumber } = _a, data = __rest(_a, ["slots", "customerPhoneNumber"]);
+        const customer = yield prisma_1.prisma.customer.findUniqueOrThrow({
+            where: {
+                phoneNumber: customerPhoneNumber,
+            },
+            select: {
+                id: true,
+            },
+        });
+        if (!customer) {
+            throw {
+                statusCode: 400,
+                message: 'Customer not found',
+            };
+        }
+        data.customerId = customer.id;
         const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
         const randomIndex = Math.floor(Math.random() * availableWorkers.length);
         const chosenWorker = availableWorkers[randomIndex];

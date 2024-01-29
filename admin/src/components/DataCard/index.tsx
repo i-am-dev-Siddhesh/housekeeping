@@ -1,9 +1,9 @@
-import { ICustomer, IWorker } from '@/types/global';
+import { ICustomer, IOrder, IWorker } from '@/types/global';
 import { Badge, Box, Divider, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 
 interface IProps {
-    data: ICustomer | IWorker | null;
+    data: ICustomer | IWorker | IOrder | null;
 }
 export const DataCard = ({ data }: IProps) => {
     return (

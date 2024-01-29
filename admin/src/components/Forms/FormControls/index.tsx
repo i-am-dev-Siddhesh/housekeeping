@@ -1,15 +1,15 @@
-import React from 'react';
 import {
+  Box,
+  Checkbox,
   FormControl,
-  FormLabel,
   FormErrorMessage,
   FormHelperText,
+  FormLabel,
   Input,
   InputGroup,
-  Checkbox,
-  Box,
+  Select,
 } from '@chakra-ui/react';
-import { AiOutlineCheck } from 'react-icons/ai';
+import { IoIosArrowDropdown } from 'react-icons/io';
 interface IProps {
   label: string;
   type: string;
@@ -20,7 +20,8 @@ interface IProps {
   rightIcon?: any;
   onChange?: any;
   value?: any;
-  placeholder?: string
+  placeholder?: string;
+  options?: { label: string; value: any }[];
 }
 
 const CustomInput = ({
@@ -32,7 +33,8 @@ const CustomInput = ({
   name,
   rightIcon,
   value,
-  placeholder
+  placeholder,
+  options,
 }: IProps) => {
   return (
     <>
@@ -42,6 +44,16 @@ const CustomInput = ({
           <Checkbox colorScheme="green" {...register(name)}>
             {label}
           </Checkbox>
+        ) : type === 'select' ? (
+          <Select
+            {...register(name)}
+            icon={<IoIosArrowDropdown />}
+            placeholder={placeholder}
+          >
+            {options?.map((item) => {
+              return <option value={item.value}>{item.label}</option>;
+            })}
+          </Select>
         ) : (
           <InputGroup>
             <Input

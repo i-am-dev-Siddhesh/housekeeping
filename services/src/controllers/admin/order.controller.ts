@@ -11,7 +11,23 @@ import { findAvailableWorkers } from '../../utils/order';
 // @access  Protected
 export const createOrderAdmin = async (req: Request, res: Response) => {
   try {
-    const { slots, ...data } = req.body;
+    const { slots, customerPhoneNumber, ...data } = req.body;
+    const customer = await prisma.customer.findUniqueOrThrow({
+      where: {
+        phoneNumber: customerPhoneNumber,
+      },
+      select: {
+        id: true,
+      },
+    });
+    
+    if (!customer) {
+      throw {
+        statusCode: 400,
+        message: 'Customer not found',
+      };
+    }
+    data.customerId = customer.id;
     const availableWorkers = await findAvailableWorkers(slots);
     const randomIndex = Math.floor(Math.random() * availableWorkers.length);
     const chosenWorker = availableWorkers[randomIndex];

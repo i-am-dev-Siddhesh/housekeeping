@@ -22,6 +22,7 @@ import CreateUpdateWorkerModal from '@/components/Forms/CreateUpdateWorkerModal'
 import CreateCustomer from '@/components/Buttons/CreateCustomer';
 import CreateWorker from '@/components/Buttons/CreateWorker';
 import { FaHouseUser, FaUserAstronaut } from 'react-icons/fa';
+import CreateOrder from '@/components/Buttons/CreateOrder';
 
 export default function SimpleSidebar({
   children,
@@ -114,11 +115,23 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             Workers
           </Button>
         </NextLink>
+        <NextLink href="/orders">
+          <Button
+            colorScheme="facebook"
+            justifyContent="flex-start"
+            width="100%"
+            gap={3}
+          >
+            <FaUserAstronaut />
+            Orders
+          </Button>
+        </NextLink>
       </Flex>
       {/* Modal buttons */}
       <Flex mt={20} mx="5" flexDir="column" gap={5}>
         <CreateWorker />
         <CreateCustomer />
+        <CreateOrder />
       </Flex>
 
       <Flex mx="5" mb="10" alignItems="flex-end" flex={1}>

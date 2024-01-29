@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateOrderSchema = exports.createOrderSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createOrderSchema = joi_1.default.object().keys({
-    customerId: joi_1.default.number().required().messages({
-        'string.base': 'Customer id should be a type of string',
-        'string.empty': 'Customer id cannot be an empty field',
-        'any.required': 'Customer id is a required field',
+    customerPhoneNumber: joi_1.default.number().required().messages({
+        'string.base': 'Customer Phone Number should be a type of string',
+        'string.empty': 'Customer Phone Number cannot be an empty field',
+        'any.required': 'Customer Phone Number is a required field',
     }),
     budget: joi_1.default.number().required().messages({
         'string.base': 'Budget should be a type of string',

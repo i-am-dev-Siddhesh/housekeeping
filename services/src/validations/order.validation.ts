@@ -1,10 +1,10 @@
 import Joi from 'joi';
 
 export const createOrderSchema = Joi.object().keys({
-  customerId: Joi.number().required().messages({
-    'string.base': 'Customer id should be a type of string',
-    'string.empty': 'Customer id cannot be an empty field',
-    'any.required': 'Customer id is a required field',
+  customerPhoneNumber: Joi.number().required().messages({
+    'string.base': 'Customer Phone Number should be a type of string',
+    'string.empty': 'Customer Phone Number cannot be an empty field',
+    'any.required': 'Customer Phone Number is a required field',
   }),
   budget: Joi.number().required().messages({
     'string.base': 'Budget should be a type of string',
@@ -51,7 +51,7 @@ export const createOrderSchema = Joi.object().keys({
         'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
 
-    slots: Joi.array()
+  slots: Joi.array()
     .items(Joi.number().integer().min(1).max(16))
     .required()
     .messages({
@@ -114,7 +114,7 @@ export const updateOrderSchema = Joi.object().keys({
         'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
 
-    slots: Joi.array()
+  slots: Joi.array()
     .items(Joi.number().integer().min(1).max(16))
     .optional()
     .messages({
