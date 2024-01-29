@@ -18,6 +18,7 @@ export async function findAvailableWorkers(requestedSlotNumbers: number[]) {
         slots: {
           select: {
             id: true,
+            slotNumber: true
           },
         },
       },

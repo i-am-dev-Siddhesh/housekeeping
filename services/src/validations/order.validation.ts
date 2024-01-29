@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 export const createOrderSchema = Joi.object().keys({
-  customerPhoneNumber: Joi.number().required().messages({
+  customerPhoneNumber: Joi.string().required().messages({
     'string.base': 'Customer Phone Number should be a type of string',
     'string.empty': 'Customer Phone Number cannot be an empty field',
     'any.required': 'Customer Phone Number is a required field',
@@ -11,19 +11,19 @@ export const createOrderSchema = Joi.object().keys({
     'string.empty': 'Budget cannot be an empty field',
     'any.required': 'Budget is a required field',
   }),
-  phoneNumber: Joi.number().required().messages({
-    'number.base': 'Phone number should be a type of number',
-    'number.empty': 'Phone number cannot be an empty field',
+  phoneNumber: Joi.string().required().messages({
+    'string.base': 'Phone number should be a type of string',
+    'string.empty': 'Phone number cannot be an empty field',
     'any.required': 'Phone number is a required field',
   }),
   expectedStartDate: Joi.date().required().messages({
     'date.base': 'Expected start date should be a valid date',
     'any.required': 'Expected start date from is a required field',
   }),
-  actualStartDate: Joi.date().required().messages({
+  actualStartDate: Joi.date().messages({
     'date.base': 'Actual start date should be a valid date',
     'any.required': 'Actual start date from is a required field',
-  }),
+  }).optional(),
   location: Joi.object().keys({
     lat: Joi.number().messages({
       'string.base': `Latitude should be a type of string`,
@@ -40,16 +40,6 @@ export const createOrderSchema = Joi.object().keys({
       'string.empty': 'Label cannot be an empty field',
     }),
   }),
-  status: Joi.string()
-    .valid('PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')
-    .required()
-    .messages({
-      'string.base': 'Status must be a string',
-      'string.empty': 'Status is required',
-      'any.required': 'Status is required',
-      'any.only':
-        'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
-    }),
 
   slots: Joi.array()
     .items(Joi.number().integer().min(1).max(16))

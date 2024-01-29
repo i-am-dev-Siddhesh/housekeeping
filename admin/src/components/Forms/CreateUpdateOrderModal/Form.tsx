@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import CustomInput from '../FormControls';
 import { parseLocationData } from '@/utils';
+import SlotSelection from '@/components/SlotSelection';
 
 const GeolocationMap = dynamic(() => import('../../GeolocationMap'), {
   ssr: false,
@@ -46,30 +47,9 @@ const OrderForm = ({ onClose, order }: IProps) => {
 
   const handleFormSubmit = async (values: any) => {
     try {
-      const formData = new FormData();
-      let data = { ...values };
-      if (data.location) {
-        formData.append('location[lat]', data.location.lat);
-        formData.append('location[lon]', data.location.lon);
-        formData.append('location[label]', data.location.label);
-      }
-      delete data.location;
-      Object.entries(data).forEach(([key, value]) => {
-        if (value instanceof FileList) {
-          // If it's a FileList (which is the type for file inputs), append each file
-          for (let i = 0; i < value.length; i++) {
-            formData.append(key, value[i]);
-          }
-        } else if (value) {
-          // For regular form fields
-          // @ts-ignore
-          formData.append(key, value);
-        }
-      });
-
       const resp = order
-        ? await OrderService.updateOrder(order.id, formData)
-        : await OrderService.createOrder(formData);
+        ? await OrderService.updateOrder(order?.id, values)
+        : await OrderService.createOrder(values);
       dispatch(
         order ? updateOrder({ data: resp.data }) : addOrder({ data: resp.data })
       );
@@ -102,6 +82,7 @@ const OrderForm = ({ onClose, order }: IProps) => {
   //     });
   //   }
   // }, [order]);
+  console.log('errors', errors);
 
   return (
     <Flex
@@ -133,9 +114,14 @@ const OrderForm = ({ onClose, order }: IProps) => {
           );
         })}
 
+        <SlotSelection
+          setValue={setValue}
+          value={watch("slots") || []}
+          error={(errors['slots']?.message as string) || ''}
+          helperText='Choose slots'
+          label='Choose slots'
+        />
         <SearchField
-          register={register}
-          errors={errors}
           value={parseLocationData(watch('location'))}
           setValue={setValue}
         />
@@ -160,7 +146,7 @@ export const formFields = [
     name: 'customerPhoneNumber',
     label: 'Customer Phone Number',
     helperText: 'Customer phone number',
-    type: 'number',
+    type: 'text',
     placeholder: 'Enter customer phone number here',
   },
   {
@@ -192,7 +178,7 @@ export const formFields = [
     name: 'phoneNumber',
     label: 'Phone Number',
     helperText: 'Enter phone number here',
-    type: 'number',
+    type: 'text',
     placeholder: 'Enter your phone number',
   },
   {
@@ -202,13 +188,13 @@ export const formFields = [
     type: 'date',
     placeholder: 'Select expected start date',
   },
-  {
-    name: 'actualStartDate',
-    label: 'Actual Start Date',
-    helperText: 'Enter actual start date here',
-    type: 'date',
-    placeholder: 'Select actual start date',
-  },
+  // {
+  //   name: 'actualStartDate',
+  //   label: 'Actual Start Date',
+  //   helperText: 'Enter actual start date here',
+  //   type: 'date',
+  //   placeholder: 'Select actual start date',
+  // },
   // {
   //   name: 'status',
   //   label: 'Status',

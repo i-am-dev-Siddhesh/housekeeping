@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateOrderSchema = exports.createOrderSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.createOrderSchema = joi_1.default.object().keys({
-    customerPhoneNumber: joi_1.default.number().required().messages({
+    customerPhoneNumber: joi_1.default.string().required().messages({
         'string.base': 'Customer Phone Number should be a type of string',
         'string.empty': 'Customer Phone Number cannot be an empty field',
         'any.required': 'Customer Phone Number is a required field',
@@ -16,19 +16,19 @@ exports.createOrderSchema = joi_1.default.object().keys({
         'string.empty': 'Budget cannot be an empty field',
         'any.required': 'Budget is a required field',
     }),
-    phoneNumber: joi_1.default.number().required().messages({
-        'number.base': 'Phone number should be a type of number',
-        'number.empty': 'Phone number cannot be an empty field',
+    phoneNumber: joi_1.default.string().required().messages({
+        'string.base': 'Phone number should be a type of string',
+        'string.empty': 'Phone number cannot be an empty field',
         'any.required': 'Phone number is a required field',
     }),
     expectedStartDate: joi_1.default.date().required().messages({
         'date.base': 'Expected start date should be a valid date',
         'any.required': 'Expected start date from is a required field',
     }),
-    actualStartDate: joi_1.default.date().required().messages({
+    actualStartDate: joi_1.default.date().messages({
         'date.base': 'Actual start date should be a valid date',
         'any.required': 'Actual start date from is a required field',
-    }),
+    }).optional(),
     location: joi_1.default.object().keys({
         lat: joi_1.default.number().messages({
             'string.base': `Latitude should be a type of string`,
@@ -44,15 +44,6 @@ exports.createOrderSchema = joi_1.default.object().keys({
             'string.base': 'Label should be a type of string',
             'string.empty': 'Label cannot be an empty field',
         }),
-    }),
-    status: joi_1.default.string()
-        .valid('PENDING', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')
-        .required()
-        .messages({
-        'string.base': 'Status must be a string',
-        'string.empty': 'Status is required',
-        'any.required': 'Status is required',
-        'any.only': 'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
     slots: joi_1.default.array()
         .items(joi_1.default.number().integer().min(1).max(16))

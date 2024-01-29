@@ -30,6 +30,7 @@ function findAvailableWorkers(requestedSlotNumbers) {
                     slots: {
                         select: {
                             id: true,
+                            slotNumber: true
                         },
                     },
                 },

@@ -11,7 +11,7 @@ interface IProps {
 }
 const GeolocationMap = ({ lat, long }: IProps) => {
   if (!lat || !long) {
-    return <Skeleton h="400px" w="100%"></Skeleton>
+    return <></>
   }
   return (
     <MapContainer

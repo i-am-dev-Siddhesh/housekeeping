@@ -20,24 +20,43 @@ export const createOrderAdmin = async (req: Request, res: Response) => {
         id: true,
       },
     });
-    
+
     if (!customer) {
       throw {
         statusCode: 400,
         message: 'Customer not found',
       };
     }
+    data.status = 'PENDING';
+
     data.customerId = customer.id;
     const availableWorkers = await findAvailableWorkers(slots);
-    const randomIndex = Math.floor(Math.random() * availableWorkers.length);
-    const chosenWorker = availableWorkers[randomIndex];
+    if (availableWorkers?.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+      const chosenWorker = availableWorkers[randomIndex];
+      data.workerId = chosenWorker.id;
+
+      const availableSlots = chosenWorker.slots
+        .filter((item) => slots.includes(item.slotNumber))
+        .map((item) => ({ id: item.id }));
+      data.slots = {
+        connect: availableSlots,
+      };
+
+      await prisma.slot.updateMany({
+        where: {
+          id: { in: availableSlots?.map((item) => item?.id) as number[] },
+        },
+        data: {
+          status: 'BOOKED',
+        },
+      });
+      data.status = 'ASSIGNED';
+    }
 
     const newOrder = await prisma.order.create({
       data: {
         ...data,
-        slots: {
-          connect: chosenWorker.slots,
-        },
       },
     });
 

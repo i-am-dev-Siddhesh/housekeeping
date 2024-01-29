@@ -44,14 +44,31 @@ const createOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 message: 'Customer not found',
             };
         }
+        data.status = 'PENDING';
         data.customerId = customer.id;
         const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
-        const randomIndex = Math.floor(Math.random() * availableWorkers.length);
-        const chosenWorker = availableWorkers[randomIndex];
+        if ((availableWorkers === null || availableWorkers === void 0 ? void 0 : availableWorkers.length) > 0) {
+            const randomIndex = Math.floor(Math.random() * availableWorkers.length);
+            const chosenWorker = availableWorkers[randomIndex];
+            data.workerId = chosenWorker.id;
+            const availableSlots = chosenWorker.slots
+                .filter((item) => slots.includes(item.slotNumber))
+                .map((item) => ({ id: item.id }));
+            data.slots = {
+                connect: availableSlots,
+            };
+            yield prisma_1.prisma.slot.updateMany({
+                where: {
+                    id: { in: availableSlots === null || availableSlots === void 0 ? void 0 : availableSlots.map((item) => item === null || item === void 0 ? void 0 : item.id) },
+                },
+                data: {
+                    status: 'BOOKED',
+                },
+            });
+            data.status = 'ASSIGNED';
+        }
         const newOrder = yield prisma_1.prisma.order.create({
-            data: Object.assign(Object.assign({}, data), { slots: {
-                    connect: chosenWorker.slots,
-                } }),
+            data: Object.assign({}, data),
         });
         return res.status(200).json({ status: true, data: newOrder });
     }
