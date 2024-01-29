@@ -15,10 +15,11 @@ import { useCallback, useEffect, useState } from 'react';
 const SearchField = ({ setValue, value }: any) => {
     const [searchedLocations, setSearchedLocations] = useState<ILocationData[]>(
         []
-    ); 
+    );
     const [selectedLocation, setSelectedLocation] =
         useState<ILocationData | null>();
     const [searchQuery, setSearchQuery] = useState<any>(value.label);
+    console.log('value', value);
 
     const handleItemClick = (location: ILocationData) => {
         setSelectedLocation(location);
@@ -26,7 +27,7 @@ const SearchField = ({ setValue, value }: any) => {
             lat: location?.y,
             lon: location?.x,
             label: location?.label,
-          };
+        };
         setValue('location', customlocation);
         setSearchQuery(location.label);
         setSearchedLocations([]);

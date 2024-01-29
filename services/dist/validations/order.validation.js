@@ -46,16 +46,21 @@ exports.createOrderSchema = joi_1.default.object().keys({
         }),
     }),
     slots: joi_1.default.array()
-        .items(joi_1.default.number().integer().min(1).max(16))
+        .items(joi_1.default.number().integer().min(1).max(17))
         .required()
         .messages({
         'array.base': 'Slots must be an array',
         'array.empty': 'Slotss is required',
         'any.required': 'Slots is required',
-        'array.includes': 'Invalid slots. Each element must be a number between 1 and 16',
+        'array.includes': 'Invalid slots. Each element must be a number between 1 and 17',
     }),
 });
 exports.updateOrderSchema = joi_1.default.object().keys({
+    customerPhoneNumber: joi_1.default.string().required().messages({
+        'string.base': 'Customer Phone Number should be a type of string',
+        'string.empty': 'Customer Phone Number cannot be an empty field',
+        'any.required': 'Customer Phone Number is a required field',
+    }),
     customerId: joi_1.default.number().messages({
         'string.base': 'Customer id should be a type of string',
         'string.empty': 'Customer id cannot be an empty field',
@@ -64,8 +69,8 @@ exports.updateOrderSchema = joi_1.default.object().keys({
         'number.base': 'Budget should be a type of number',
         'any.required': 'Budget is a required field',
     }),
-    phoneNumber: joi_1.default.number().optional().messages({
-        'number.base': 'Phone number should be a type of number',
+    phoneNumber: joi_1.default.string().optional().messages({
+        'string.base': 'Phone number should be a type of number',
         'any.required': 'Phone number is a required field',
     }),
     expectedStartDate: joi_1.default.date().optional().messages({
@@ -98,10 +103,10 @@ exports.updateOrderSchema = joi_1.default.object().keys({
         'any.only': 'Invalid status. Must be one of PENDING, ASSIGNED, IN_PROGRESS, COMPLETED, CANCELLED',
     }),
     slots: joi_1.default.array()
-        .items(joi_1.default.number().integer().min(1).max(16))
+        .items(joi_1.default.number().integer().min(1).max(17))
         .optional()
         .messages({
         'array.base': 'Slots must be an array',
-        'array.includes': 'Invalid slots. Each element must be a number between 1 and 16',
+        'array.includes': 'Invalid slots. Each element must be a number between 1 and 17',
     }),
 });

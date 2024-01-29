@@ -44,7 +44,7 @@ const CustomTable = ({
 }: IProps) => {
   const [{ pageIndex, pageSize, filterBy }, setPagination] = useState<any>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 50,
     filterBy: '',
   });
 

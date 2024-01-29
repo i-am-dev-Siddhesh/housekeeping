@@ -72,15 +72,46 @@ export const createOrderAdmin = async (req: Request, res: Response) => {
 export const updateOrderAdmin = async (req: Request, res: Response) => {
   try {
     const { orderId } = req.params;
-    const { slots, ...data } = req.body;
+    const { slots, customerPhoneNumber, ...data } = req.body;
 
-    if (slots) {
-      const availableWorkers = await findAvailableWorkers(slots);
+    const customer = await prisma.customer.findUniqueOrThrow({
+      where: {
+        phoneNumber: customerPhoneNumber,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!customer) {
+      throw {
+        statusCode: 400,
+        message: 'Customer not found',
+      };
+    }
+
+    const availableWorkers = await findAvailableWorkers(slots);
+    if (availableWorkers?.length > 0) {
       const randomIndex = Math.floor(Math.random() * availableWorkers.length);
       const chosenWorker = availableWorkers[randomIndex];
+      data.workerId = chosenWorker.id;
+
+      const availableSlots = chosenWorker.slots
+        .filter((item) => slots.includes(item.slotNumber))
+        .map((item) => ({ id: item.id }));
       data.slots = {
-        connect: chosenWorker.slots,
+        connect: availableSlots,
       };
+
+      await prisma.slot.updateMany({
+        where: {
+          id: { in: availableSlots?.map((item) => item?.id) as number[] },
+        },
+        data: {
+          status: 'BOOKED',
+        },
+      });
+      data.status = 'ASSIGNED';
     }
 
     const updatedOrder = await prisma.order.update({
@@ -141,6 +172,18 @@ export const findOrdersForAdmin = async (req: Request, res: Response) => {
     const Orders = await prisma.order.findMany({
       skip,
       take: pageSize,
+      include: {
+        customer: {
+          select: {
+            phoneNumber: true,
+          },
+        },
+        slots: {
+          select: {
+            slotNumber: true,
+          },
+        },
+      },
     });
 
     return res.status(200).json({ status: true, data: Orders });

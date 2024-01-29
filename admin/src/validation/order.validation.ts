@@ -53,7 +53,7 @@ export const updateOrderSchema = yup.object().shape({
   customerId: yup.number().typeError('Customer id should be a type of number'),
   budget: yup.number().typeError('Budget should be a type of number'),
   phoneNumber: yup
-    .number()
+    .string()
     .typeError('Phone number should be a type of number'),
   expectedStartDate: yup
     .date()
@@ -78,8 +78,10 @@ export const updateOrderSchema = yup.object().shape({
       yup
         .number()
         .integer()
-        .min(1)
-        .max(16)
-        .typeError('Each slot must be a number between 1 and 16')
-    ),
+        .required('Each slot must be a number between 1 and 17')
+        .typeError('Each slot must be a number between 1 and 17')
+    )
+    .min(1, 'Slots must not be an empty array')
+    .required('Slots is a required field')
+    .typeError('Slots must be an array'),
 });

@@ -1,6 +1,6 @@
 import OrderService from '@/services/Order/index';
 import { addOrder, updateOrder } from '@/store/reducers/order.reducer';
-import { IOrder } from '@/types/global';
+import { IOrder, ISlot } from '@/types/global';
 import { errorFormatter, useYupValidationResolver } from '@/utils/helpers';
 import {
   createOrderSchema,
@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import CustomInput from '../FormControls';
 import { parseLocationData } from '@/utils';
 import SlotSelection from '@/components/SlotSelection';
+import { useEffect, useMemo } from 'react';
 
 const GeolocationMap = dynamic(() => import('../../GeolocationMap'), {
   ssr: false,
@@ -73,17 +74,32 @@ const OrderForm = ({ onClose, order }: IProps) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (order) {
-  //     reset({
-  //       location: order.location,
-  //       phoneNumber: order.phoneNumber,
-  //       // email: order.email,
-  //     });
-  //   }
-  // }, [order]);
-  console.log('errors', errors);
+  useEffect(() => {
+    if (order) {
+      reset({
+        location: order.location,
+        phoneNumber: order.phoneNumber,
+        customerPhoneNumber: order?.customer?.phoneNumber,
+        budget: order.budget,
+        expectedStartDate: order.expectedStartDate &&
+          new Date(order.expectedStartDate)?.toISOString()?.split('T')[0],
+        actualStartDate: order.actualStartDate &&
+          new Date(order.actualStartDate)?.toISOString()?.split('T')[0],
+        status: order.status,
+        slots: order.slots.map((slot: ISlot) => slot.slotNumber),
+      });
+    }
+  }, [order]);
 
+  const fields = useMemo(() => {
+    let arr: any[] = [...formFields]
+    if (order) {
+      arr.push(...formFields2)
+    }
+    return arr
+  }, [formFields, order])
+  console.log('order',order);
+  
   return (
     <Flex
       gap={5}
@@ -97,7 +113,7 @@ const OrderForm = ({ onClose, order }: IProps) => {
       }}
     >
       <Flex gap={5} flexDir="column" w="100%" bg="#ffffff">
-        {formFields.map((item, index) => {
+        {fields?.map((item, index) => {
           return (
             <div key={item.name + '-' + index}>
               <CustomInput
@@ -188,25 +204,28 @@ export const formFields = [
     type: 'date',
     placeholder: 'Select expected start date',
   },
-  // {
-  //   name: 'actualStartDate',
-  //   label: 'Actual Start Date',
-  //   helperText: 'Enter actual start date here',
-  //   type: 'date',
-  //   placeholder: 'Select actual start date',
-  // },
-  // {
-  //   name: 'status',
-  //   label: 'Status',
-  //   helperText: 'Select order status',
-  //   type: 'select',
-  //   placeholder: 'Select order status',
-  //   options: [
-  //     { label: 'Pending', value: 'PENDING' },
-  //     { label: 'Assigned', value: 'ASSIGNED' },
-  //     { label: 'In Progress', value: 'IN_PROGRESS' },
-  //     { label: 'Completed', value: 'COMPLETED' },
-  //     { label: 'Cancelled', value: 'CANCELLED' },
-  //   ]
-  // },
+
 ];
+
+
+const formFields2 = [{
+  name: 'actualStartDate',
+  label: 'Actual Start Date',
+  helperText: 'Enter actual start date here',
+  type: 'date',
+  placeholder: 'Select actual start date',
+},
+{
+  name: 'status',
+  label: 'Status',
+  helperText: 'Select order status',
+  type: 'select',
+  placeholder: 'Select order status',
+  options: [
+    { label: 'Pending', value: 'PENDING' },
+    { label: 'Assigned', value: 'ASSIGNED' },
+    { label: 'In Progress', value: 'IN_PROGRESS' },
+    { label: 'Completed', value: 'COMPLETED' },
+    { label: 'Cancelled', value: 'CANCELLED' },
+  ]
+},]

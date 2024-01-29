@@ -98,7 +98,7 @@ export interface ICreateOrder {
 export interface IOrder {
   id: number;
   customer: ICustomer;
-  customerId: number;
+  customerPhoneNumber: string;
   worker?: Worker;
   workerId?: number;
   phoneNumber: string;

@@ -42,18 +42,23 @@ export const createOrderSchema = Joi.object().keys({
   }),
 
   slots: Joi.array()
-    .items(Joi.number().integer().min(1).max(16))
+    .items(Joi.number().integer().min(1).max(17))
     .required()
     .messages({
       'array.base': 'Slots must be an array',
       'array.empty': 'Slotss is required',
       'any.required': 'Slots is required',
       'array.includes':
-        'Invalid slots. Each element must be a number between 1 and 16',
+        'Invalid slots. Each element must be a number between 1 and 17',
     }),
 });
 
 export const updateOrderSchema = Joi.object().keys({
+  customerPhoneNumber: Joi.string().required().messages({
+    'string.base': 'Customer Phone Number should be a type of string',
+    'string.empty': 'Customer Phone Number cannot be an empty field',
+    'any.required': 'Customer Phone Number is a required field',
+  }),
   customerId: Joi.number().messages({
     'string.base': 'Customer id should be a type of string',
     'string.empty': 'Customer id cannot be an empty field',
@@ -63,8 +68,8 @@ export const updateOrderSchema = Joi.object().keys({
     'any.required': 'Budget is a required field',
   }),
 
-  phoneNumber: Joi.number().optional().messages({
-    'number.base': 'Phone number should be a type of number',
+  phoneNumber: Joi.string().optional().messages({
+    'string.base': 'Phone number should be a type of number',
     'any.required': 'Phone number is a required field',
   }),
 
@@ -105,11 +110,11 @@ export const updateOrderSchema = Joi.object().keys({
     }),
 
   slots: Joi.array()
-    .items(Joi.number().integer().min(1).max(16))
+    .items(Joi.number().integer().min(1).max(17))
     .optional()
     .messages({
       'array.base': 'Slots must be an array',
       'array.includes':
-        'Invalid slots. Each element must be a number between 1 and 16',
+        'Invalid slots. Each element must be a number between 1 and 17',
     }),
 });

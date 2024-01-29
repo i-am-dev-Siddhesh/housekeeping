@@ -83,14 +83,41 @@ exports.createOrderAdmin = createOrderAdmin;
 const updateOrderAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { orderId } = req.params;
-        const _b = req.body, { slots } = _b, data = __rest(_b, ["slots"]);
-        if (slots) {
-            const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
+        const _b = req.body, { slots, customerPhoneNumber } = _b, data = __rest(_b, ["slots", "customerPhoneNumber"]);
+        const customer = yield prisma_1.prisma.customer.findUniqueOrThrow({
+            where: {
+                phoneNumber: customerPhoneNumber,
+            },
+            select: {
+                id: true,
+            },
+        });
+        if (!customer) {
+            throw {
+                statusCode: 400,
+                message: 'Customer not found',
+            };
+        }
+        const availableWorkers = yield (0, order_1.findAvailableWorkers)(slots);
+        if ((availableWorkers === null || availableWorkers === void 0 ? void 0 : availableWorkers.length) > 0) {
             const randomIndex = Math.floor(Math.random() * availableWorkers.length);
             const chosenWorker = availableWorkers[randomIndex];
+            data.workerId = chosenWorker.id;
+            const availableSlots = chosenWorker.slots
+                .filter((item) => slots.includes(item.slotNumber))
+                .map((item) => ({ id: item.id }));
             data.slots = {
-                connect: chosenWorker.slots,
+                connect: availableSlots,
             };
+            yield prisma_1.prisma.slot.updateMany({
+                where: {
+                    id: { in: availableSlots === null || availableSlots === void 0 ? void 0 : availableSlots.map((item) => item === null || item === void 0 ? void 0 : item.id) },
+                },
+                data: {
+                    status: 'BOOKED',
+                },
+            });
+            data.status = 'ASSIGNED';
         }
         const updatedOrder = yield prisma_1.prisma.order.update({
             data,
@@ -147,6 +174,18 @@ const findOrdersForAdmin = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const Orders = yield prisma_1.prisma.order.findMany({
             skip,
             take: pageSize,
+            include: {
+                customer: {
+                    select: {
+                        phoneNumber: true,
+                    },
+                },
+                slots: {
+                    select: {
+                        slotNumber: true,
+                    },
+                },
+            },
         });
         return res.status(200).json({ status: true, data: Orders });
     }
